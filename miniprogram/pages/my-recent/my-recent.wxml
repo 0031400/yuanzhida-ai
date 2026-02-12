@@ -1,0 +1,49 @@
+<navigation-bar title="最近浏览" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="page">
+  <scroll-view
+    class="scroll"
+    scroll-y="{{true}}"
+    lower-threshold="{{120}}"
+    bindscrolltolower="onScrollToLower"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresherRefresh"
+  >
+    <view class="content">
+      <block wx:if="{{loading}}">
+        <view class="skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this">
+          <view class="skeleton-line title"></view>
+          <view class="skeleton-line"></view>
+          <view class="skeleton-line short"></view>
+        </view>
+      </block>
+
+      <block wx:elif="{{questions.length === 0}}">
+        <van-empty description="你最近还没有浏览题目" />
+      </block>
+
+      <block wx:else>
+        <view class="question-card" wx:for="{{questions}}" wx:key="id" data-id="{{item.id}}" bindtap="onQuestionTap">
+          <view class="card-head">
+            <text class="status-tag {{item.solvedFlag === 1 ? 'resolved' : 'pending'}}">{{item.solvedText}}</text>
+          </view>
+          <text class="title">{{item.title}}</text>
+          <text class="question-content">{{item.content}}</text>
+          <view class="meta-row">
+            <text class="meta">{{item.username}}</text>
+            <text class="meta">{{item.createTimeText}}</text>
+            <text class="meta">赞 {{item.likeCount}}</text>
+            <text class="meta">评 {{item.commentCount}}</text>
+            <text class="meta">藏 {{item.collectCount}}</text>
+          </view>
+        </view>
+
+        <view class="list-footer">
+          <text wx:if="{{loadingMore}}" class="footer-text">加载中...</text>
+          <text wx:elif="{{!hasMore}}" class="footer-text">没有更多了</text>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+</view>

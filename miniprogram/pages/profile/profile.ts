@@ -120,6 +120,12 @@ Page({
       })
       return
     }
+    if (key === 'my-recent') {
+      wx.navigateTo({
+        url: '/pages/my-recent/my-recent',
+      })
+      return
+    }
     wx.showToast({
       title: '该功能建设中',
       icon: 'none',
