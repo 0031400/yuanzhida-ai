@@ -23,7 +23,7 @@ export const uploadImage = (filePath: string): Promise<string> => {
           return
         }
         if (payload.code !== '0') {
-          reject(payload.message ?? '上传失败')
+          reject(payload.message !== null && payload.message !== undefined ? payload.message : '上传失败')
           return
         }
         resolve(payload.data)

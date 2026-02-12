@@ -85,7 +85,11 @@ Component({
     },
     mapToCard(question: QuestionItem): QuestionCard {
       const categoryId = toCategoryId(question)
-      const categoryName = this.data.categories.find((item) => item.id === categoryId)?.name ?? '未分类'
+      const matchedCategory = this.data.categories.find((item) => item.id === categoryId)
+      const categoryName =
+        matchedCategory && matchedCategory.name !== undefined && matchedCategory.name !== null
+          ? matchedCategory.name
+          : '未分类'
       return {
         ...question,
         categoryId,

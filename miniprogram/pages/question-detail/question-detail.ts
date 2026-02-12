@@ -23,7 +23,10 @@ const normalizeImageUrl = (url: string): string => {
   if (/^https?:\/\//.test(trimmed)) {
     return trimmed
   }
-  const prefix = envConfig.assetBaseUrl?.trim()
+  const prefix =
+    envConfig.assetBaseUrl !== undefined && envConfig.assetBaseUrl !== null
+      ? envConfig.assetBaseUrl.trim()
+      : ''
   if (!prefix) {
     return trimmed
   }

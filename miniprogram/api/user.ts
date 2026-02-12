@@ -9,10 +9,14 @@ export interface CaptchaResult {
 }
 
 const pickCookie = (header: WechatMiniprogram.IAnyObject): string => {
-  const rawCookie = header['Set-Cookie'] ?? header['set-cookie']
+  const rawCookie =
+    header['Set-Cookie'] !== undefined && header['Set-Cookie'] !== null
+      ? header['Set-Cookie']
+      : header['set-cookie']
   if (!rawCookie) return ''
   const cookieText = Array.isArray(rawCookie) ? rawCookie[0] : String(rawCookie)
-  return cookieText.split(';')[0] ?? ''
+  const firstCookie = cookieText.split(';')[0]
+  return firstCookie !== undefined && firstCookie !== null ? firstCookie : ''
 }
 
 export const fetchLoginCaptcha = (): Promise<CaptchaResult> =>

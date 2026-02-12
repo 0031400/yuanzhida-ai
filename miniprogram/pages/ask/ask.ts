@@ -38,9 +38,13 @@ Page({
 
     try {
       const categories = await getCategoryList()
+      const firstCategory = categories.length > 0 ? categories[0] : null
       this.setData({
         categories,
-        activeCategoryId: categories[0]?.id ?? 0,
+        activeCategoryId:
+          firstCategory && firstCategory.id !== undefined && firstCategory.id !== null
+            ? firstCategory.id
+            : 0,
       })
     } catch (_error) {
       wx.showToast({

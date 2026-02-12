@@ -76,11 +76,16 @@ Page({
     }
   },
   getStats(activityScore: number, profile: UserProfile | null): ProfileStat[] {
+    const likeCount = profile && profile.likeCount !== undefined && profile.likeCount !== null ? profile.likeCount : 0
+    const collectCount =
+      profile && profile.collectCount !== undefined && profile.collectCount !== null ? profile.collectCount : 0
+    const usefulCount =
+      profile && profile.usefulCount !== undefined && profile.usefulCount !== null ? profile.usefulCount : 0
     return [
       { label: '活跃度', value: activityScore || 0 },
-      { label: '获赞', value: profile?.likeCount || 0 },
-      { label: '收藏', value: profile?.collectCount || 0 },
-      { label: '有用', value: profile?.usefulCount || 0 },
+      { label: '获赞', value: likeCount },
+      { label: '收藏', value: collectCount },
+      { label: '有用', value: usefulCount },
     ]
   },
   onLoginTap(): void {

@@ -19,10 +19,9 @@
     "lib": [
       "ES6"
     ],
-    "baseUrl": ".",
     "paths": {
       "@vant/weapp/*": [
-        "miniprogram/node_modules/@vant/weapp/dist/*"
+        "./miniprogram/node_modules/@vant/weapp/dist/*"
       ]
     },
     "typeRoots": [
