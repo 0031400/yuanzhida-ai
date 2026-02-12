@@ -39,4 +39,11 @@ export interface PublishQuestionPayload {
   images: string[]
 }
 
+export interface UpdateQuestionPayload {
+  id: number
+  title: string
+  content: string
+  images: string
+}
+
 export type QuestionPage = PageResult<QuestionItem>

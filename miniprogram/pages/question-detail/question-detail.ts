@@ -87,6 +87,7 @@ Page({
     replyToUsername: '',
     currentUsername: '',
     canResolveQuestion: false,
+    canEditQuestion: false,
     resolvingQuestion: false,
     togglingCollect: false,
     togglingLike: false,
@@ -108,6 +109,11 @@ Page({
       questionId,
     })
     void this.bootstrap()
+  },
+  onShow() {
+    if (this.data.questionId > 0 && !this.data.loading) {
+      void this.loadQuestionDetail()
+    }
   },
   onPullDownRefresh() {
     void this.bootstrap(true)
@@ -146,11 +152,13 @@ Page({
         detail.username !== undefined &&
         detail.username !== null &&
         detail.username === this.data.currentUsername
+      const canEditQuestion = canResolveQuestion && detail.commentCount === 0
       this.setData({
         question: detail,
         imageList: parseImageList(detail.images),
         questionTimeText: formatDateTime(detail.createTime),
         canResolveQuestion,
+        canEditQuestion,
       })
     } catch (_error) {
       wx.showToast({
@@ -200,6 +208,25 @@ Page({
     } finally {
       this.setData({ resolvingQuestion: false })
     }
+  },
+  onEditQuestion(): void {
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    const question = this.data.question
+    if (!question) {
+      return
+    }
+    if (!this.data.canEditQuestion) {
+      wx.showToast({
+        title: '已有同学解答，不能修改',
+        icon: 'none',
+      })
+      return
+    }
+    wx.navigateTo({
+      url: `/pages/ask/ask?id=${question.id}`,
+    })
   },
   isCollected(): boolean {
     const question = this.data.question
@@ -701,6 +728,7 @@ Page({
             ...currentQuestion,
             commentCount: currentQuestion.commentCount + 1,
           },
+          canEditQuestion: false,
         })
       }
       this.setData({

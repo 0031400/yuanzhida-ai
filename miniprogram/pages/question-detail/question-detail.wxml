@@ -44,6 +44,13 @@
               {{togglingCollect ? '处理中...' : (question.collectStatus === '已收藏' ? '取消收藏' : '收藏问题')}}
             </view>
             <view
+              wx:if="{{canEditQuestion}}"
+              class="resolve-action-btn edit-question-btn"
+              bindtap="onEditQuestion"
+            >
+              修改问题
+            </view>
+            <view
               wx:if="{{canResolveQuestion}}"
               class="resolve-action-btn {{question.solvedFlag === 1 ? 'cancel' : 'confirm'}} {{resolvingQuestion ? 'disabled' : ''}}"
               bindtap="onMarkResolved"

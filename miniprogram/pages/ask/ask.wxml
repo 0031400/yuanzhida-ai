@@ -1,4 +1,4 @@
-<navigation-bar title="发布问题" back="{{true}}" color="black" background="#fff"></navigation-bar>
+<navigation-bar title="{{pageTitle}}" back="{{true}}" color="black" background="#fff"></navigation-bar>
 
 <view class="page">
   <scroll-view class="scroll" scroll-y="{{true}}">
@@ -18,7 +18,7 @@
       />
     </view>
 
-    <view class="section">
+    <view class="section" wx:if="{{!isEditMode}}">
       <view class="section-title">选择主题</view>
       <view class="chip-row" wx:if="{{!loadingCategories}}">
         <view
@@ -53,6 +53,8 @@
   </scroll-view>
 
   <view class="bottom-bar">
-    <van-button type="primary" block="{{true}}" loading="{{submitting}}" bind:tap="onSubmit">发布问题</van-button>
+    <van-button type="primary" block="{{true}}" loading="{{submitting}}" bind:tap="onSubmit">
+      {{isEditMode ? '保存修改' : '发布问题'}}
+    </van-button>
   </view>
 </view>

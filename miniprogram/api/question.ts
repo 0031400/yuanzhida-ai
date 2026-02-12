@@ -4,6 +4,7 @@ import type {
   QuestionItem,
   QuestionPage,
   QuestionPageQuery,
+  UpdateQuestionPayload,
 } from '../types/question'
 import { request } from '../utils/request'
 
@@ -34,6 +35,13 @@ export const publishQuestion = (payload: PublishQuestionPayload) =>
       categoryId: payload.categoryId,
       images: joinImages(payload.images),
     },
+  })
+
+export const updateQuestion = (payload: UpdateQuestionPayload) =>
+  request<null, UpdateQuestionPayload>({
+    url: '/api/answerly/v1/question',
+    method: 'PUT',
+    data: payload,
   })
 
 export const resolveQuestion = (id: number) =>
