@@ -1,0 +1,68 @@
+<navigation-bar title="问题详情" back="{{true}}" color="black" background="#fff"></navigation-bar>
+
+<view class="page">
+  <scroll-view class="scroll" scroll-y="{{true}}" bindscrolltolower="onReachBottom">
+    <block wx:if="{{loading}}">
+      <view class="skeleton-card">
+        <view class="skeleton-line title"></view>
+        <view class="skeleton-line"></view>
+        <view class="skeleton-line short"></view>
+      </view>
+    </block>
+
+    <block wx:elif="{{!question}}">
+      <van-empty description="题目不存在或已被删除" />
+    </block>
+
+    <block wx:else>
+      <view class="question-card">
+        <text class="title">{{question.title}}</text>
+        <text class="content">{{question.content}}</text>
+        <view class="meta-row">
+          <text class="meta">作者：{{question.username}}</text>
+          <text class="meta">{{questionTimeText}}</text>
+          <text class="meta">赞 {{question.likeCount}}</text>
+          <text class="meta">评 {{question.commentCount}}</text>
+        </view>
+
+        <view class="image-grid" wx:if="{{imageList.length > 0}}">
+          <image
+            wx:for="{{imageList}}"
+            wx:key="*this"
+            class="question-image"
+            src="{{item}}"
+            mode="aspectFill"
+            data-index="{{index}}"
+            bindtap="onPreviewImage"
+          />
+        </view>
+      </view>
+
+      <view class="section-title">评论</view>
+
+      <block wx:if="{{comments.length === 0}}">
+        <view class="comment-empty">
+          <van-empty description="暂无评论，来抢沙发吧" />
+        </view>
+      </block>
+
+      <block wx:else>
+        <view class="comment-card" wx:for="{{comments}}" wx:key="id">
+          <view class="comment-head">
+            <text class="comment-user">{{item.username}}</text>
+            <text class="comment-time">{{item.createTimeText}}</text>
+          </view>
+          <text class="comment-content">{{item.content}}</text>
+          <view class="comment-meta">
+            <text class="comment-like">点赞 {{item.likeCount}}</text>
+          </view>
+        </view>
+      </block>
+
+      <view class="footer">
+        <text wx:if="{{commentLoadingMore}}" class="footer-text">评论加载中...</text>
+        <text wx:elif="{{!hasMoreComments && comments.length > 0}}" class="footer-text">评论到底了</text>
+      </view>
+    </block>
+  </scroll-view>
+</view>

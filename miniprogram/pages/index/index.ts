@@ -167,9 +167,8 @@ Component({
       if (!Number.isFinite(id)) {
         return
       }
-      wx.showToast({
-        title: `题目 ${id} 详情页待实现`,
-        icon: 'none',
+      wx.navigateTo({
+        url: `/pages/question-detail/question-detail?id=${id}`,
       })
     },
   },

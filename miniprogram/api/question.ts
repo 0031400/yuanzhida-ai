@@ -1,5 +1,6 @@
 import type {
   PublishQuestionPayload,
+  QuestionDetail,
   QuestionItem,
   QuestionPage,
   QuestionPageQuery,
@@ -17,7 +18,7 @@ export const getQuestionPage = (query: QuestionPageQuery) =>
   })
 
 export const getQuestionDetail = (id: number) =>
-  request<QuestionItem>({
+  request<QuestionDetail>({
     url: `/api/answerly/v1/question/${id}`,
     method: 'GET',
     authRequired: false,

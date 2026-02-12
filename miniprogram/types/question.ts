@@ -16,6 +16,13 @@ export interface QuestionItem {
   createTime: string
 }
 
+export interface QuestionDetail extends QuestionItem {
+  images?: string
+  updateTime?: string
+  likeStatus?: string
+  collectStatus?: string
+}
+
 export interface QuestionPageQuery {
   current: number
   size: number
