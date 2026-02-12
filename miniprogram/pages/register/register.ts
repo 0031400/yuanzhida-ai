@@ -1,10 +1,9 @@
 import { register, sendRegisterCode } from '../../api/user'
 import { pickErrorMessage } from '../../utils/error'
-import { isNonEmpty } from '../../utils/validate'
+import { isNonEmpty, isValidBuaaRegisterMail } from '../../utils/validate'
 
 const CODE_SECONDS = 60
 let countdownTimer: number | null = null
-const isEmail = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
 Page({
   data: {
@@ -44,9 +43,9 @@ Page({
       return
     }
     const mail = this.data.mail.trim()
-    if (!isEmail(mail)) {
+    if (!isValidBuaaRegisterMail(mail)) {
       wx.showToast({
-        title: '请输入有效邮箱',
+        title: '邮箱格式需为8位数字@buaa.edu.cn',
         icon: 'none',
       })
       return
@@ -87,9 +86,9 @@ Page({
       })
       return
     }
-    if (!isEmail(mail)) {
+    if (!isValidBuaaRegisterMail(mail)) {
       wx.showToast({
-        title: '请输入有效邮箱',
+        title: '邮箱格式需为8位数字@buaa.edu.cn',
         icon: 'none',
       })
       return

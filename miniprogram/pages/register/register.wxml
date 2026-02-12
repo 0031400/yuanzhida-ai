@@ -6,7 +6,7 @@
 
   <view class="form-card">
     <van-field label="用户名" model:value="{{username}}" placeholder="请输入用户名" />
-    <van-field label="邮箱" model:value="{{mail}}" placeholder="请输入学校邮箱" />
+    <van-field label="邮箱" model:value="{{mail}}" placeholder="请输入8位数字@buaa.edu.cn" />
     <view class="code-row">
       <van-field
         custom-style="flex: 1;"
