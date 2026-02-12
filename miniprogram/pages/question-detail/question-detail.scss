@@ -249,6 +249,10 @@ page {
   color: #15803d;
 }
 
+.comment-reply-btn.editing-active {
+  color: #d97706;
+}
+
 .comment-action-group {
   display: flex;
   align-items: center;
@@ -308,6 +312,10 @@ page {
   border-radius: 12rpx;
   padding: 10rpx 14rpx;
   background: #eff6ff;
+}
+
+.reply-indicator.editing {
+  background: #fff7ed;
 }
 
 .reply-indicator-text {

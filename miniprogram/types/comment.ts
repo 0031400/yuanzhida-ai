@@ -32,4 +32,10 @@ export interface PublishCommentPayload {
   images?: string
 }
 
+export interface UpdateCommentPayload {
+  id: number
+  content: string
+  images?: string
+}
+
 export type CommentPage = PageResult<CommentItem>

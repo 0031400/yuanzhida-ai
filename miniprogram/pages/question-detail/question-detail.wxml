@@ -125,6 +125,16 @@
               </text>
               <text
                 wx:if="{{comment.isMine}}"
+                class="comment-reply-btn {{editingCommentId === comment.id ? 'editing-active' : ''}}"
+                data-id="{{comment.id}}"
+                data-username="{{comment.username}}"
+                data-content="{{comment.content}}"
+                bindtap="onEditComment"
+              >
+                {{editingCommentId === comment.id ? '编辑中' : '编辑'}}
+              </text>
+              <text
+                wx:if="{{comment.isMine}}"
                 class="comment-reply-btn danger"
                 data-id="{{comment.id}}"
                 data-username="{{comment.username}}"
@@ -197,6 +207,16 @@
                   </text>
                   <text
                     wx:if="{{child.isMine}}"
+                    class="comment-reply-btn {{editingCommentId === child.id ? 'editing-active' : ''}}"
+                    data-id="{{child.id}}"
+                    data-username="{{child.username}}"
+                    data-content="{{child.content}}"
+                    bindtap="onEditComment"
+                  >
+                    {{editingCommentId === child.id ? '编辑中' : '编辑'}}
+                  </text>
+                  <text
+                    wx:if="{{child.isMine}}"
                     class="comment-reply-btn danger"
                     data-id="{{child.id}}"
                     data-username="{{child.username}}"
@@ -220,6 +240,10 @@
   </scroll-view>
 
   <view class="comment-bar">
+    <view class="reply-indicator editing" wx:if="{{editingCommentId > 0}}">
+      <text class="reply-indicator-text">正在编辑评论</text>
+      <text class="reply-indicator-cancel" bindtap="onCancelEdit">取消</text>
+    </view>
     <view class="reply-indicator" wx:if="{{replyParentCommentId > 0}}">
       <text class="reply-indicator-text">正在回复：{{replyToUsername}}</text>
       <text class="reply-indicator-cancel" bindtap="onCancelReply">取消</text>
@@ -244,7 +268,7 @@
       <textarea
         class="comment-input"
         maxlength="1000"
-        placeholder="写下评论，可带图片..."
+        placeholder="{{editingCommentId > 0 ? '编辑评论内容，可替换图片...' : '写下评论，可带图片...'}}"
         value="{{commentDraft}}"
         bindinput="onCommentInput"
         auto-height="{{true}}"
@@ -258,7 +282,7 @@
           loading="{{submittingComment}}"
           bind:tap="onSubmitComment"
         >
-          发送
+          {{editingCommentId > 0 ? '更新' : '发送'}}
         </van-button>
       </view>
     </view>

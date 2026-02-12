@@ -1,4 +1,4 @@
-import type { CommentPage, CommentPageQuery, PublishCommentPayload } from '../types/comment'
+import type { CommentPage, CommentPageQuery, PublishCommentPayload, UpdateCommentPayload } from '../types/comment'
 import { request } from '../utils/request'
 
 export const getQuestionCommentPage = (query: CommentPageQuery) =>
@@ -50,4 +50,11 @@ export const getMyCommentPage = (current: number, size: number) =>
     url: '/api/answerly/v1/comment/my/page',
     method: 'GET',
     data: { current, size },
+  })
+
+export const updateComment = (payload: UpdateCommentPayload) =>
+  request<null, UpdateCommentPayload>({
+    url: '/api/answerly/v1/comment',
+    method: 'PUT',
+    data: payload,
   })

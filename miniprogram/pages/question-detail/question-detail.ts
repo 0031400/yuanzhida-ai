@@ -4,6 +4,7 @@ import {
   likeComment,
   publishComment,
   toggleCommentUseful,
+  updateComment,
 } from '../../api/comment'
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
@@ -80,6 +81,7 @@ Page({
     commentDraft: '',
     commentImagePaths: [] as string[],
     submittingComment: false,
+    editingCommentId: 0,
     replyParentCommentId: 0,
     replyTopCommentId: 0,
     replyToUsername: '',
@@ -506,6 +508,9 @@ Page({
       return
     }
     this.setData({
+      editingCommentId: 0,
+      commentDraft: '',
+      commentImagePaths: [],
       replyParentCommentId: parentId,
       replyTopCommentId: parentId,
       replyToUsername: username,
@@ -520,9 +525,47 @@ Page({
     }
     // Enforce at most one child layer by always replying under top comment.
     this.setData({
+      editingCommentId: 0,
+      commentDraft: '',
+      commentImagePaths: [],
       replyParentCommentId: topId,
       replyTopCommentId: topId,
       replyToUsername: username,
+    })
+  },
+  onEditComment(event: WechatMiniprogram.TouchEvent): void {
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    const rawId = event.currentTarget.dataset.id
+    const username = String(event.currentTarget.dataset.username || '')
+    const content = String(event.currentTarget.dataset.content || '')
+    const id = typeof rawId === 'number' ? rawId : Number(rawId)
+    if (!Number.isFinite(id) || id <= 0) {
+      return
+    }
+    if (username !== this.data.currentUsername) {
+      wx.showToast({
+        title: '只能编辑自己的评论',
+        icon: 'none',
+      })
+      return
+    }
+
+    this.setData({
+      editingCommentId: id,
+      commentDraft: content,
+      commentImagePaths: [],
+      replyParentCommentId: 0,
+      replyTopCommentId: 0,
+      replyToUsername: '',
+    })
+  },
+  onCancelEdit(): void {
+    this.setData({
+      editingCommentId: 0,
+      commentDraft: '',
+      commentImagePaths: [],
     })
   },
   onCancelReply(): void {
@@ -620,6 +663,28 @@ Page({
 
     this.setData({ submittingComment: true })
     try {
+      const editingCommentId = this.data.editingCommentId
+      if (editingCommentId > 0) {
+        const uploadedImages =
+          this.data.commentImagePaths.length > 0 ? await Promise.all(this.data.commentImagePaths.map(uploadImage)) : []
+        await updateComment({
+          id: editingCommentId,
+          content,
+          images: uploadedImages.length > 0 ? uploadedImages.join(',') : undefined,
+        })
+        this.setData({
+          editingCommentId: 0,
+          commentDraft: '',
+          commentImagePaths: [],
+        })
+        wx.showToast({
+          title: '评论已更新',
+          icon: 'success',
+        })
+        await this.loadComments(true)
+        return
+      }
+
       const uploadedImages = await Promise.all(this.data.commentImagePaths.map(uploadImage))
       const images = uploadedImages.join(',')
       await publishComment({
