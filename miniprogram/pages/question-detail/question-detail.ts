@@ -1,4 +1,5 @@
 import { getQuestionCommentPage } from '../../api/comment'
+import { envConfig } from '../../config/index'
 import { getQuestionDetail } from '../../api/question'
 import type { CommentItem } from '../../types/comment'
 import type { QuestionDetail } from '../../types/question'
@@ -14,13 +15,30 @@ interface QuestionDetailQuery {
 
 const DEFAULT_PAGE_SIZE = 10
 
+const normalizeImageUrl = (url: string): string => {
+  const trimmed = url.trim()
+  if (!trimmed) {
+    return ''
+  }
+  if (/^https?:\/\//.test(trimmed)) {
+    return trimmed
+  }
+  const prefix = envConfig.assetBaseUrl?.trim()
+  if (!prefix) {
+    return trimmed
+  }
+  const normalizedPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`
+  const normalizedPath = trimmed.startsWith('/') ? trimmed.slice(1) : trimmed
+  return `${normalizedPrefix}${normalizedPath}`
+}
+
 const parseImageList = (images?: string): string[] => {
   if (!images) {
     return []
   }
   return images
     .split(',')
-    .map((item) => item.trim())
+    .map((item) => normalizeImageUrl(item))
     .filter((item) => item.length > 0)
 }
 
