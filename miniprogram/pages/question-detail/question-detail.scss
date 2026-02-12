@@ -208,18 +208,27 @@ page {
 .comment-input-row {
   width: 100%;
   display: flex;
-  align-items: center;
-  gap: 14rpx;
+  flex-direction: column;
+  gap: 12rpx;
 }
 
 .comment-input {
-  flex: 1;
-  height: 72rpx;
-  padding: 0 24rpx;
-  border-radius: 999rpx;
+  width: 100%;
+  min-height: 136rpx;
+  max-height: 280rpx;
+  padding: 18rpx 24rpx;
+  box-sizing: border-box;
+  border-radius: 18rpx;
   background: #f3f4f6;
   font-size: 26rpx;
+  line-height: 1.55;
   color: #111827;
+}
+
+.comment-send-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .comment-send-btn {

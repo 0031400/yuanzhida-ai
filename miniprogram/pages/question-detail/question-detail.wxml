@@ -98,25 +98,26 @@
       <text class="pick-image-tip">{{commentImagePaths.length}} / 3</text>
     </view>
     <view class="comment-input-row">
-      <input
+      <textarea
         class="comment-input"
-        type="text"
-        maxlength="300"
+        maxlength="1000"
         placeholder="写下评论，可带图片..."
         value="{{commentDraft}}"
         bindinput="onCommentInput"
-        confirm-type="send"
-        bindconfirm="onSubmitComment"
+        auto-height="{{true}}"
+        show-confirm-bar="{{false}}"
       />
-      <van-button
-        custom-class="comment-send-btn"
-        type="primary"
-        size="small"
-        loading="{{submittingComment}}"
-        bind:tap="onSubmitComment"
-      >
-        发送
-      </van-button>
+      <view class="comment-send-row">
+        <van-button
+          custom-class="comment-send-btn"
+          type="primary"
+          size="small"
+          loading="{{submittingComment}}"
+          bind:tap="onSubmitComment"
+        >
+          发送
+        </van-button>
+      </view>
     </view>
   </view>
 </view>
