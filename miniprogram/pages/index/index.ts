@@ -1,5 +1,6 @@
 import { getCategoryList } from '../../api/category'
 import { getQuestionPage } from '../../api/question'
+import { authStore } from '../../store/auth.store'
 import type { CategoryItem } from '../../types/category'
 import type { QuestionItem, QuestionPageQuery } from '../../types/question'
 import { formatFromNow } from '../../utils/day'
@@ -42,6 +43,13 @@ Component({
   lifetimes: {
     attached() {
       void this.bootstrap()
+    },
+  },
+  pageLifetimes: {
+    show() {
+      if (!this.data.loading) {
+        void this.loadQuestions(true)
+      }
     },
   },
   methods: {
@@ -169,6 +177,24 @@ Component({
       }
       wx.navigateTo({
         url: `/pages/question-detail/question-detail?id=${id}`,
+      })
+    },
+    onAskTap(): void {
+      const auth = authStore.hydrate()
+      if (!auth.isLoggedIn) {
+        wx.showToast({
+          title: '请先登录再提问',
+          icon: 'none',
+        })
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/login',
+          })
+        }, 200)
+        return
+      }
+      wx.navigateTo({
+        url: '/pages/ask/ask',
       })
     },
   },

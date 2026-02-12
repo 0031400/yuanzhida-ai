@@ -130,6 +130,13 @@ page {
   color: #9ca3af;
 }
 
+.ask-fab {
+  position: fixed;
+  right: 26rpx;
+  bottom: 36rpx;
+  z-index: 20;
+}
+
 .skeleton-card {
   margin-bottom: 20rpx;
   padding: 24rpx;

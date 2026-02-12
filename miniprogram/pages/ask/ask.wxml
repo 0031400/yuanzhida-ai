@@ -1,0 +1,58 @@
+<navigation-bar title="发布问题" back="{{true}}" color="black" background="#fff"></navigation-bar>
+
+<view class="page">
+  <scroll-view class="scroll" scroll-y="{{true}}">
+    <view class="form-card">
+      <van-field
+        label="标题"
+        model:value="{{title}}"
+        placeholder="一句话描述你的问题（最多 50 字）"
+      />
+      <van-field
+        label="内容"
+        model:value="{{content}}"
+        type="textarea"
+        autosize="{{true}}"
+        maxlength="1000"
+        placeholder="尽量描述清楚背景、已尝试方法、卡住位置"
+      />
+    </view>
+
+    <view class="section">
+      <view class="section-title">选择主题</view>
+      <view class="chip-row" wx:if="{{!loadingCategories}}">
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="chip {{activeCategoryId === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onCategoryTap"
+        >
+          {{item.name}}
+        </view>
+      </view>
+      <text wx:else class="hint">主题加载中...</text>
+    </view>
+
+    <view class="section">
+      <view class="section-title">上传图片（最多 3 张）</view>
+      <view class="image-grid">
+        <view
+          wx:for="{{imagePaths}}"
+          wx:key="*this"
+          class="image-item"
+        >
+          <image class="image" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="onPreviewImage" />
+          <view class="remove" data-index="{{index}}" bindtap="onRemoveImage">×</view>
+        </view>
+        <view wx:if="{{imagePaths.length < 3}}" class="add-image" bindtap="onChooseImages">
+          <text class="add-text">+ 添加</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <van-button type="primary" block="{{true}}" loading="{{submitting}}" bind:tap="onSubmit">发布问题</van-button>
+  </view>
+</view>

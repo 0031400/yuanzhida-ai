@@ -83,4 +83,8 @@
       </block>
     </view>
   </scroll-view>
+
+  <view class="ask-fab" bindtap="onAskTap">
+    <van-button type="primary" size="small">去提问</van-button>
+  </view>
 </view>
