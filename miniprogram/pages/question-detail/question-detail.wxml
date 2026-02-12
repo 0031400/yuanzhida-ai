@@ -51,6 +51,13 @@
               修改问题
             </view>
             <view
+              wx:if="{{canDeleteQuestion}}"
+              class="resolve-action-btn delete-question-btn {{deletingQuestion ? 'disabled' : ''}}"
+              bindtap="onDeleteQuestion"
+            >
+              {{deletingQuestion ? '删除中...' : '删除问题'}}
+            </view>
+            <view
               wx:if="{{canResolveQuestion}}"
               class="resolve-action-btn {{question.solvedFlag === 1 ? 'cancel' : 'confirm'}} {{resolvingQuestion ? 'disabled' : ''}}"
               bindtap="onMarkResolved"

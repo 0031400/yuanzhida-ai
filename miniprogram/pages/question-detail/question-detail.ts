@@ -9,6 +9,7 @@ import {
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
 import {
+  deleteQuestion,
   getQuestionDetail,
   resolveQuestion,
   toggleQuestionCollect,
@@ -88,7 +89,9 @@ Page({
     currentUsername: '',
     canResolveQuestion: false,
     canEditQuestion: false,
+    canDeleteQuestion: false,
     resolvingQuestion: false,
+    deletingQuestion: false,
     togglingCollect: false,
     togglingLike: false,
   },
@@ -159,6 +162,7 @@ Page({
         questionTimeText: formatDateTime(detail.createTime),
         canResolveQuestion,
         canEditQuestion,
+        canDeleteQuestion: canEditQuestion,
       })
     } catch (_error) {
       wx.showToast({
@@ -226,6 +230,72 @@ Page({
     }
     wx.navigateTo({
       url: `/pages/ask/ask?id=${question.id}`,
+    })
+  },
+  onDeleteQuestion(): void {
+    if (this.data.deletingQuestion) {
+      return
+    }
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    const question = this.data.question
+    if (!question) {
+      return
+    }
+    if (!this.data.canDeleteQuestion) {
+      wx.showToast({
+        title: '已有评论，不能删除问题',
+        icon: 'none',
+      })
+      return
+    }
+
+    wx.showModal({
+      title: '删除问题',
+      content: '确认删除该问题吗？删除后不可恢复。',
+      success: async (res) => {
+        if (!res.confirm) return
+        this.setData({ deletingQuestion: true })
+        try {
+          const latest = await getQuestionDetail(question.id)
+          const canDelete =
+            latest.username !== undefined &&
+            latest.username !== null &&
+            latest.username === this.data.currentUsername &&
+            latest.commentCount === 0
+          if (!canDelete) {
+            wx.showToast({
+              title: '已有评论，不能删除问题',
+              icon: 'none',
+            })
+            await this.loadQuestionDetail()
+            return
+          }
+
+          await deleteQuestion(question.id)
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success',
+          })
+          setTimeout(() => {
+            wx.navigateBack({
+              fail: () => {
+                wx.switchTab({
+                  url: '/pages/index/index',
+                })
+              },
+            })
+          }, 250)
+        } catch (error) {
+          wx.showToast({
+            title: pickErrorMessage(error, '删除失败'),
+            icon: 'none',
+          })
+        } finally {
+          this.setData({ deletingQuestion: false })
+        }
+      },
     })
   },
   isCollected(): boolean {
@@ -723,14 +793,15 @@ Page({
       })
       const currentQuestion = this.data.question
       if (currentQuestion) {
-        this.setData({
-          question: {
-            ...currentQuestion,
-            commentCount: currentQuestion.commentCount + 1,
-          },
-          canEditQuestion: false,
-        })
-      }
+          this.setData({
+            question: {
+              ...currentQuestion,
+              commentCount: currentQuestion.commentCount + 1,
+            },
+            canEditQuestion: false,
+            canDeleteQuestion: false,
+          })
+        }
       this.setData({
         commentDraft: '',
         commentImagePaths: [],

@@ -44,6 +44,12 @@ export const updateQuestion = (payload: UpdateQuestionPayload) =>
     data: payload,
   })
 
+export const deleteQuestion = (id: number) =>
+  request<null>({
+    url: `/api/answerly/v1/question?id=${id}`,
+    method: 'DELETE',
+  })
+
 export const resolveQuestion = (id: number) =>
   request<null, { id: number }>({
     url: '/api/answerly/v1/question/resolved',
