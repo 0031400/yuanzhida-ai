@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Freshman QA WeChat Mini Program",
   "scripts": {
-    "lint": "eslint --ext .ts miniprogram",
+    "lint": "eslint --ext .ts miniprogram --max-warnings 0",
+    "typecheck": "npx tsc --noEmit -p tsconfig.json",
+    "check": "npm run typecheck && npm run lint",
     "format": "prettier --write \"miniprogram/**/*.{ts,scss,json,wxml}\""
   },
   "keywords": [],
@@ -19,6 +21,7 @@
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "miniprogram-api-typings": "^2.8.3-1",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
   }
 }

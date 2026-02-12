@@ -1,0 +1,41 @@
+<navigation-bar title="登录" back="{{true}}" color="black" background="#fff"></navigation-bar>
+
+<view class="page">
+  <view class="title">Answerly</view>
+  <view class="subtitle">登录后继续提问与回答</view>
+
+  <view class="form-card">
+    <van-field
+      label="用户名"
+      model:value="{{username}}"
+      placeholder="请输入用户名"
+    />
+    <van-field
+      label="密码"
+      model:value="{{password}}"
+      placeholder="请输入密码"
+      password="{{true}}"
+    />
+    <view class="captcha-row">
+      <van-field
+        custom-style="flex: 1;"
+        label="验证码"
+        model:value="{{code}}"
+        placeholder="请输入验证码"
+      />
+      <image class="captcha-image" src="{{captchaImage}}" mode="aspectFit" bindtap="refreshCaptcha" />
+    </view>
+
+    <view class="action-row">
+      <van-button
+        type="primary"
+        block="{{true}}"
+        loading="{{submitting}}"
+        bind:tap="onSubmit"
+      >
+        登录
+      </van-button>
+    </view>
+    <text class="captcha-tip" bindtap="refreshCaptcha">看不清？点击验证码图片刷新</text>
+  </view>
+</view>

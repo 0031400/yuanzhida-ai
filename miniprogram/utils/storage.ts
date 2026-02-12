@@ -1,6 +1,7 @@
 export const STORAGE_KEYS = {
   token: 'auth_token',
   username: 'auth_username',
+  captchaOwner: 'captcha_owner',
 } as const
 
 export const storage = {

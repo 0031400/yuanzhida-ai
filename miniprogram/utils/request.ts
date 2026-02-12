@@ -1,4 +1,4 @@
-import { envConfig } from '../config'
+import { envConfig } from '../config/index'
 import { authStore } from '../store/auth.store'
 import type { ApiResponse, RequestError } from '../types/api'
 import { getErrorMessage } from './error-map'

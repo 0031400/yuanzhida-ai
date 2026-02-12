@@ -9,7 +9,7 @@ export interface EnvConfig {
 const ENV_CONFIG_MAP: Record<RuntimeEnv, EnvConfig> = {
   dev: {
     env: 'dev',
-    baseUrl: 'http://localhost:8080',
+    baseUrl: 'http://127.0.0.1:8000',
     timeout: 10000,
   },
   test: {
@@ -24,8 +24,10 @@ const ENV_CONFIG_MAP: Record<RuntimeEnv, EnvConfig> = {
   },
 }
 
+type WxEnvVersion = WechatMiniprogram.AccountInfo['miniProgram']['envVersion']
+
 const mapWxEnvVersion = (
-  envVersion: WechatMiniprogram.AccountInfoMiniProgram['envVersion'] | undefined,
+  envVersion: WxEnvVersion,
 ): RuntimeEnv => {
   if (envVersion === 'release') return 'prod'
   if (envVersion === 'trial') return 'test'
@@ -33,7 +35,7 @@ const mapWxEnvVersion = (
 }
 
 export const getEnvConfig = (): EnvConfig => {
-  const accountInfo = wx.getAccountInfoSync?.()
-  const env = mapWxEnvVersion(accountInfo?.miniProgram?.envVersion)
+  const accountInfo = wx.getAccountInfoSync()
+  const env = mapWxEnvVersion(accountInfo.miniProgram.envVersion)
   return ENV_CONFIG_MAP[env]
 }

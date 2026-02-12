@@ -1,62 +1,31 @@
-/**index.scss**/
 page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.scrollarea {
-  flex: 1;
-  overflow-y: hidden;
+  background: #f5f7fb;
 }
 
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #aaa;
-  width: 80%;
+.page {
+  padding: 32rpx;
 }
 
-.userinfo-avatar {
-  overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
 }
 
-.usermotto {
-  margin-top: 200px;
-}
-
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.avatar {
+.title {
   display: block;
-  width: 56px;
-  height: 56px;
+  font-size: 36rpx;
+  color: #1f2937;
+  font-weight: 600;
 }
 
-.nickname-wrapper {
-  display: flex;
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
+.desc {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #6b7280;
 }
 
-.nickname-label {
-  width: 105px;
-}
-
-.nickname-input {
-  flex: 1;
+.action-btn {
+  margin-top: 28rpx !important;
 }

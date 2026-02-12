@@ -1,4 +1,4 @@
-import { envConfig } from '../config'
+import { envConfig } from '../config/index'
 import { authStore } from '../store/auth.store'
 
 export const uploadImage = (filePath: string): Promise<string> => {
