@@ -13,8 +13,28 @@ page {
 }
 
 .search-wrap {
+  position: relative;
   padding: 16rpx 24rpx 8rpx;
   background: #fff;
+  z-index: 3;
+}
+
+.suggest-panel {
+  margin-top: 6rpx;
+  padding: 8rpx 0;
+  border-radius: 16rpx;
+  background: #fff;
+  box-shadow: 0 10rpx 24rpx rgba(15, 23, 42, 0.08);
+}
+
+.suggest-item {
+  padding: 16rpx 24rpx;
+  font-size: 25rpx;
+  color: #334155;
+}
+
+.suggest-item + .suggest-item {
+  border-top: 1rpx solid #f1f5f9;
 }
 
 .category-scroll {

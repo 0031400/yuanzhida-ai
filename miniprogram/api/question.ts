@@ -18,6 +18,14 @@ export const getQuestionPage = (query: QuestionPageQuery) =>
     authRequired: false,
   })
 
+export const getQuestionSuggest = (keyword: string) =>
+  request<string[], { keyword: string }>({
+    url: '/api/answerly/v1/question/suggest',
+    method: 'GET',
+    data: { keyword },
+    authRequired: false,
+  })
+
 export const getQuestionDetail = (id: number) =>
   request<QuestionDetail>({
     url: `/api/answerly/v1/question/${id}`,

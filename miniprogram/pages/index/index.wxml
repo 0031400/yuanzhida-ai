@@ -6,10 +6,21 @@
       model:value="{{keyword}}"
       shape="round"
       placeholder="搜索课程问题关键词"
-      bind:input="onKeywordInput"
+      bind:change="onKeywordInput"
       bind:search="onSearchConfirm"
       bind:clear="onSearchClear"
     />
+    <view wx:if="{{showSuggestions}}" class="suggest-panel">
+      <view
+        class="suggest-item"
+        wx:for="{{suggestions}}"
+        wx:key="*this"
+        data-keyword="{{item}}"
+        bindtap="onSuggestionTap"
+      >
+        {{item}}
+      </view>
+    </view>
   </view>
 
   <scroll-view class="category-scroll" scroll-x="{{true}}" enable-flex="{{true}}" show-scrollbar="{{false}}">

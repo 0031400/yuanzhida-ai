@@ -1,11 +1,11 @@
 import { getCategoryList } from '../../api/category'
-import { getQuestionPage } from '../../api/question'
+import { getQuestionPage, getQuestionSuggest } from '../../api/question'
 import { authStore } from '../../store/auth.store'
 import type { CategoryItem } from '../../types/category'
 import type { QuestionItem, QuestionPageQuery } from '../../types/question'
 import { formatFromNow } from '../../utils/day'
 
-type SearchInputEvent = WechatMiniprogram.CustomEvent<string>
+type SearchInputEvent = WechatMiniprogram.CustomEvent<string | { value?: string }>
 type TapEvent = WechatMiniprogram.TouchEvent
 
 interface QuestionCard extends QuestionItem {
@@ -15,6 +15,9 @@ interface QuestionCard extends QuestionItem {
 
 const ALL_CATEGORY_ID = 0
 const DEFAULT_PAGE_SIZE = 10
+const SUGGEST_DEBOUNCE_MS = 220
+let suggestTimer: number | null = null
+let suggestRequestSeq = 0
 
 const toNumberId = (value: unknown): number => {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -32,6 +35,8 @@ const toNumberId = (value: unknown): number => {
 Component({
   data: {
     keyword: '',
+    suggestions: [] as string[],
+    showSuggestions: false,
     categories: [] as CategoryItem[],
     activeCategoryId: ALL_CATEGORY_ID,
     questions: [] as QuestionCard[],
@@ -46,6 +51,9 @@ Component({
     attached() {
       void this.bootstrap()
     },
+    detached() {
+      this.clearSuggestTimer()
+    },
   },
   pageLifetimes: {
     show() {
@@ -55,6 +63,49 @@ Component({
     },
   },
   methods: {
+    clearSuggestTimer(): void {
+      if (suggestTimer !== null) {
+        clearTimeout(suggestTimer)
+        suggestTimer = null
+      }
+    },
+    async fetchSuggestions(keyword: string): Promise<void> {
+      const trimmed = keyword.trim()
+      if (!trimmed) {
+        this.setData({
+          suggestions: [],
+          showSuggestions: false,
+        })
+        return
+      }
+
+      const seq = suggestRequestSeq + 1
+      suggestRequestSeq = seq
+      try {
+        const suggestions = await getQuestionSuggest(trimmed)
+        if (seq !== suggestRequestSeq) {
+          return
+        }
+        this.setData({
+          suggestions: suggestions.slice(0, 8),
+          showSuggestions: suggestions.length > 0 && this.data.keyword.trim().length > 0,
+        })
+      } catch (_error) {
+        if (seq !== suggestRequestSeq) {
+          return
+        }
+        this.setData({
+          suggestions: [],
+          showSuggestions: false,
+        })
+      }
+    },
+    scheduleSuggestFetch(keyword: string): void {
+      this.clearSuggestTimer()
+      suggestTimer = setTimeout(() => {
+        void this.fetchSuggestions(keyword)
+      }, SUGGEST_DEBOUNCE_MS)
+    },
     async bootstrap(): Promise<void> {
       await this.loadCategories()
       await this.loadQuestions(true)
@@ -143,16 +194,44 @@ Component({
       }
     },
     onKeywordInput(event: SearchInputEvent): void {
+      const detail = event.detail
+      const keyword =
+        typeof detail === 'string'
+          ? detail
+          : detail && typeof detail.value === 'string'
+            ? detail.value
+            : ''
       this.setData({
-        keyword: event.detail,
+        keyword,
       })
+      this.scheduleSuggestFetch(keyword)
     },
     onSearchConfirm(): void {
+      this.clearSuggestTimer()
+      this.setData({
+        showSuggestions: false,
+      })
       void this.loadQuestions(true)
     },
     onSearchClear(): void {
+      this.clearSuggestTimer()
+      suggestRequestSeq += 1
       this.setData({
         keyword: '',
+        suggestions: [],
+        showSuggestions: false,
+      })
+      void this.loadQuestions(true)
+    },
+    onSuggestionTap(event: TapEvent): void {
+      const keyword = String(event.currentTarget.dataset.keyword || '').trim()
+      if (!keyword) {
+        return
+      }
+      this.clearSuggestTimer()
+      this.setData({
+        keyword,
+        showSuggestions: false,
       })
       void this.loadQuestions(true)
     },
