@@ -4,6 +4,7 @@ export interface QuestionItem {
   id: number
   title: string
   content: string
+  userId?: number
   categoryId: number
   category?: number
   username: string

@@ -130,6 +130,16 @@ page {
   color: #1677ff;
 }
 
+.comment-action-group {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.comment-reply-btn.danger {
+  color: #dc2626;
+}
+
 .child-comment-list {
   margin-top: 14rpx;
   padding: 14rpx;

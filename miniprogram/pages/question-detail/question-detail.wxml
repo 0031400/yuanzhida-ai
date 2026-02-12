@@ -69,14 +69,33 @@
           </view>
           <view class="comment-meta">
             <text class="comment-like">点赞 {{comment.likeCount}}</text>
-            <text
-              class="comment-reply-btn"
-              data-id="{{comment.id}}"
-              data-username="{{comment.username}}"
-              bindtap="onReplyTopComment"
-            >
-              回复
-            </text>
+            <view class="comment-action-group">
+              <text
+                class="comment-reply-btn"
+                data-id="{{comment.id}}"
+                data-username="{{comment.username}}"
+                bindtap="onLikeComment"
+              >
+                点赞
+              </text>
+              <text
+                class="comment-reply-btn"
+                data-id="{{comment.id}}"
+                data-username="{{comment.username}}"
+                bindtap="onReplyTopComment"
+              >
+                回复
+              </text>
+              <text
+                wx:if="{{comment.isMine}}"
+                class="comment-reply-btn danger"
+                data-id="{{comment.id}}"
+                data-username="{{comment.username}}"
+                bindtap="onDeleteComment"
+              >
+                删除
+              </text>
+            </view>
           </view>
 
           <view class="child-comment-list" wx:if="{{comment.childCards.length > 0}}">
@@ -112,14 +131,33 @@
               </view>
               <view class="comment-meta">
                 <text class="comment-like">点赞 {{child.likeCount}}</text>
-                <text
-                  class="comment-reply-btn"
-                  data-top-id="{{comment.id}}"
-                  data-username="{{child.username}}"
-                  bindtap="onReplyChildComment"
-                >
-                  回复
-                </text>
+                <view class="comment-action-group">
+                  <text
+                    class="comment-reply-btn"
+                    data-id="{{child.id}}"
+                    data-username="{{child.username}}"
+                    bindtap="onLikeComment"
+                  >
+                    点赞
+                  </text>
+                  <text
+                    class="comment-reply-btn"
+                    data-top-id="{{comment.id}}"
+                    data-username="{{child.username}}"
+                    bindtap="onReplyChildComment"
+                  >
+                    回复
+                  </text>
+                  <text
+                    wx:if="{{child.isMine}}"
+                    class="comment-reply-btn danger"
+                    data-id="{{child.id}}"
+                    data-username="{{child.username}}"
+                    bindtap="onDeleteComment"
+                  >
+                    删除
+                  </text>
+                </view>
               </view>
             </view>
           </view>

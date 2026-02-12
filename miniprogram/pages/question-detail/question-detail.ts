@@ -1,4 +1,4 @@
-import { getQuestionCommentPage, publishComment } from '../../api/comment'
+import { deleteComment, getQuestionCommentPage, likeComment, publishComment } from '../../api/comment'
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
 import { getQuestionDetail } from '../../api/question'
@@ -12,6 +12,7 @@ interface CommentCard extends CommentItem {
   createTimeText: string
   imageList: string[]
   childCards: CommentCard[]
+  isMine: boolean
 }
 
 interface QuestionDetailQuery {
@@ -71,8 +72,13 @@ Page({
     replyParentCommentId: 0,
     replyTopCommentId: 0,
     replyToUsername: '',
+    currentUsername: '',
   },
   onLoad(query: QuestionDetailQuery) {
+    const auth = authStore.hydrate()
+    this.setData({
+      currentUsername: auth.username,
+    })
     const questionId = Number(query.id)
     if (!Number.isFinite(questionId) || questionId <= 0) {
       wx.showToast({
@@ -93,6 +99,10 @@ Page({
     void this.loadComments(false)
   },
   async bootstrap(withRefresh = false): Promise<void> {
+    const auth = authStore.hydrate()
+    this.setData({
+      currentUsername: auth.username,
+    })
     this.setData({
       loading: true,
       hasMoreComments: true,
@@ -171,7 +181,110 @@ Page({
       createTimeText: formatDateTime(comment.createTime),
       imageList: parseImageList(comment.images),
       childCards,
+      isMine:
+        this.data.currentUsername.length > 0 &&
+        comment.username !== undefined &&
+        comment.username !== null &&
+        comment.username === this.data.currentUsername,
     }
+  },
+  ensureLoginForAction(): boolean {
+    const auth = authStore.hydrate()
+    this.setData({
+      currentUsername: auth.username,
+    })
+    if (auth.isLoggedIn) {
+      return true
+    }
+    wx.showToast({
+      title: '请先登录',
+      icon: 'none',
+    })
+    setTimeout(() => {
+      wx.navigateTo({
+        url: '/pages/login/login',
+      })
+    }, 200)
+    return false
+  },
+  async onLikeComment(event: WechatMiniprogram.TouchEvent): Promise<void> {
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    const rawId = event.currentTarget.dataset.id
+    const username = String(event.currentTarget.dataset.username || '')
+    const id = typeof rawId === 'number' ? rawId : Number(rawId)
+    if (!Number.isFinite(id) || id <= 0) {
+      return
+    }
+    if (username && username === this.data.currentUsername) {
+      wx.showToast({
+        title: '不能点赞自己的评论',
+        icon: 'none',
+      })
+      return
+    }
+
+    try {
+      const likePayload: { id: number; entityUserId?: number } = { id }
+      const question = this.data.question
+      const entityUserId =
+        question && question.userId !== undefined && question.userId !== null ? Number(question.userId) : NaN
+      if (Number.isFinite(entityUserId)) {
+        likePayload.entityUserId = entityUserId
+      }
+      await likeComment(likePayload)
+      wx.showToast({
+        title: '操作成功',
+        icon: 'success',
+      })
+      await this.loadComments(true)
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '点赞失败'),
+        icon: 'none',
+      })
+    }
+  },
+  onDeleteComment(event: WechatMiniprogram.TouchEvent): void {
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    const rawId = event.currentTarget.dataset.id
+    const username = String(event.currentTarget.dataset.username || '')
+    const id = typeof rawId === 'number' ? rawId : Number(rawId)
+    if (!Number.isFinite(id) || id <= 0) {
+      return
+    }
+    if (username !== this.data.currentUsername) {
+      wx.showToast({
+        title: '只能删除自己的评论',
+        icon: 'none',
+      })
+      return
+    }
+
+    wx.showModal({
+      title: '删除评论',
+      content: '确认删除这条评论吗？',
+      success: async (res) => {
+        if (!res.confirm) return
+        try {
+          await deleteComment(id)
+          await this.loadQuestionDetail()
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success',
+          })
+          await this.loadComments(true)
+        } catch (error) {
+          wx.showToast({
+            title: pickErrorMessage(error, '删除失败'),
+            icon: 'none',
+          })
+        }
+      },
+    })
   },
   onReplyTopComment(event: WechatMiniprogram.TouchEvent): void {
     const rawId = event.currentTarget.dataset.id

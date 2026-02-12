@@ -3,6 +3,7 @@ import type { PageResult } from './api'
 export interface CommentItem {
   id: number
   questionId: number
+  userId?: number
   parentCommentId?: number
   topCommentId?: number
   content: string
@@ -11,6 +12,7 @@ export interface CommentItem {
   commentTo?: string | null
   avatar?: string
   likeCount: number
+  likeStatus?: string
   createTime: string
   childComments?: CommentItem[]
 }

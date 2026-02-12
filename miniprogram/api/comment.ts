@@ -21,3 +21,19 @@ export const publishComment = (payload: PublishCommentPayload) =>
       images: payload.images !== undefined ? payload.images : '',
     },
   })
+
+export const likeComment = (payload: { id: number; entityUserId?: number }) =>
+  request<null, { id: number; entityUserId?: number }>({
+    url: '/api/answerly/v1/comment/like',
+    method: 'POST',
+    data: {
+      id: payload.id,
+      entityUserId: payload.entityUserId,
+    },
+  })
+
+export const deleteComment = (id: number) =>
+  request<null>({
+    url: `/api/answerly/v1/comment?id=${id}`,
+    method: 'DELETE',
+  })
