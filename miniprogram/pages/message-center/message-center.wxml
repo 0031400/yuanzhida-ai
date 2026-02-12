@@ -1,29 +1,79 @@
 <navigation-bar title="消息中心" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="page">
-  <view class="hero-card">
-    <text class="title">消息中心</text>
-    <text class="desc">按互动类型查看通知，后续支持一键已读与筛选。</text>
+  <view wx:if="{{!isLoggedIn}}" class="card guest-card">
+    <text class="guest-title">登录后查看消息通知</text>
+    <text class="guest-desc">评论、点赞、收藏和系统消息会汇总在这里。</text>
+    <van-button type="primary" round bindtap="onGoLogin">去登录</van-button>
   </view>
 
-  <view class="card">
-    <view class="item">
-      <text class="item-title">评论与回复</text>
-      <text class="item-arrow">></text>
+  <block wx:else>
+    <view class="hero-card">
+      <text class="title">消息概览</text>
+      <text class="desc">点击分类可查看具体通知内容。</text>
+      <view class="summary-grid">
+        <view
+          wx:for="{{summaryCards}}"
+          wx:key="type"
+          class="summary-item {{activeType === item.type ? 'active' : ''}}"
+          data-type="{{item.type}}"
+          bindtap="onTypeTap"
+        >
+          <text class="summary-label">{{item.label}}</text>
+          <view class="summary-meta">
+            <text class="summary-total">共 {{item.totalCount}}</text>
+            <text wx:if="{{item.unreadCount > 0}}" class="summary-unread">{{item.unreadCount}} 未读</text>
+          </view>
+        </view>
+      </view>
     </view>
-    <view class="item">
-      <text class="item-title">点赞通知</text>
-      <text class="item-arrow">></text>
+
+    <view class="tab-card">
+      <van-tabs
+        active="{{activeTab}}"
+        color="#1677ff"
+        line-width="40"
+        sticky="{{false}}"
+        bind:change="onTabChange"
+      >
+        <van-tab wx:for="{{summaryCards}}" wx:key="type" title="{{item.label}}">
+          <scroll-view
+            class="message-scroll"
+            scroll-y="{{true}}"
+            lower-threshold="{{100}}"
+            bindscrolltolower="onScrollToLower"
+            refresher-enabled="{{true}}"
+            refresher-triggered="{{refreshing}}"
+            bindrefresherrefresh="onRefresherRefresh"
+          >
+            <view class="message-list">
+              <view wx:if="{{loadingMessages}}" class="loading-wrap">
+                <text class="loading-text">消息加载中...</text>
+              </view>
+
+              <block wx:elif="{{messages.length === 0}}">
+                <van-empty description="该分类暂无消息" />
+              </block>
+
+              <block wx:else>
+                <view wx:for="{{messages}}" wx:key="id" class="message-item">
+                  <view class="message-head">
+                    <text class="message-tag {{item.status === 1 ? 'unread' : ''}}">{{item.statusText}}</text>
+                    <text class="message-time">{{item.timeText}}</text>
+                  </view>
+                  <text class="message-content">{{item.content}}</text>
+                </view>
+                <view class="list-footer">
+                  <text wx:if="{{loadingMore}}" class="footer-text">加载中...</text>
+                  <text wx:elif="{{!hasMore}}" class="footer-text">没有更多了</text>
+                </view>
+              </block>
+            </view>
+          </scroll-view>
+        </van-tab>
+      </van-tabs>
     </view>
-    <view class="item">
-      <text class="item-title">收藏与有用</text>
-      <text class="item-arrow">></text>
-    </view>
-    <view class="item">
-      <text class="item-title">系统消息</text>
-      <text class="item-arrow">></text>
-    </view>
-  </view>
+  </block>
 
   <view class="safe-bottom"></view>
 </view>
