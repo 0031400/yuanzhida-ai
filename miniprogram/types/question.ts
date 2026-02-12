@@ -5,9 +5,11 @@ export interface QuestionItem {
   title: string
   content: string
   categoryId: number
+  category?: number
   username: string
   avatar?: string
   solvedFlag: number
+  viewCount?: number
   likeCount: number
   commentCount: number
   collectCount: number

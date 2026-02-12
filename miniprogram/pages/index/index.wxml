@@ -1,15 +1,86 @@
-<navigation-bar title="Answerly" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="Answerly 问答" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
 <view class="page">
-  <view class="card">
-    <block wx:if="{{isLoggedIn}}">
-      <text class="title">欢迎你，{{username}}</text>
-      <text class="desc">你已经登录，可以继续浏览和提问。</text>
-      <van-button type="default" custom-class="action-btn" bind:tap="onLogout">退出登录</van-button>
-    </block>
-    <block wx:else>
-      <text class="title">你还未登录</text>
-      <text class="desc">登录后可进行提问、评论、收藏等操作。</text>
-      <van-button type="primary" custom-class="action-btn" bind:tap="goLogin">去登录</van-button>
-    </block>
+  <view class="search-wrap">
+    <van-search
+      model:value="{{keyword}}"
+      shape="round"
+      placeholder="搜索课程问题关键词"
+      bind:input="onKeywordInput"
+      bind:search="onSearchConfirm"
+      bind:clear="onSearchClear"
+    />
   </view>
+
+  <scroll-view class="category-scroll" scroll-x="{{true}}" enable-flex="{{true}}" show-scrollbar="{{false}}">
+    <view class="category-row">
+      <view
+        class="category-chip {{activeCategoryId === 0 ? 'active' : ''}}"
+        data-id="0"
+        bindtap="onCategoryTap"
+      >
+        全部
+      </view>
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="category-chip {{activeCategoryId === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onCategoryTap"
+      >
+        {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view
+    class="question-scroll"
+    scroll-y="{{true}}"
+    bindscrolltolower="onScrollToLower"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresherRefresh"
+  >
+    <view class="content">
+      <block wx:if="{{loading}}">
+        <view class="skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this">
+          <view class="skeleton-line title"></view>
+          <view class="skeleton-line"></view>
+          <view class="skeleton-line short"></view>
+        </view>
+      </block>
+
+      <block wx:elif="{{questions.length === 0}}">
+        <van-empty description="这个主题还没有问题，试试发布第一条吧" />
+      </block>
+
+      <block wx:else>
+        <view
+          class="question-card"
+          wx:for="{{questions}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onQuestionTap"
+        >
+          <view class="card-head">
+            <text class="category-tag">{{item.categoryName}}</text>
+            <text class="status-tag {{item.solvedFlag === 1 ? 'resolved' : 'pending'}}">{{item.solvedText}}</text>
+          </view>
+          <text class="title">{{item.title}}</text>
+          <text class="question-content">{{item.content}}</text>
+          <view class="meta-row">
+            <text class="meta">{{item.username}}</text>
+            <text class="meta">{{item.createTimeText}}</text>
+            <text class="meta">赞 {{item.likeCount}}</text>
+            <text class="meta">评 {{item.commentCount}}</text>
+          </view>
+        </view>
+
+        <view class="list-footer">
+          <text wx:if="{{loadingMore}}" class="footer-text">加载中...</text>
+          <text wx:elif="{{!hasMore}}" class="footer-text">没有更多了</text>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
 </view>

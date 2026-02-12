@@ -20,9 +20,6 @@
       "ES6"
     ],
     "baseUrl": ".",
-    "types": [
-      "miniprogram-api-typings"
-    ],
     "paths": {
       "@vant/weapp/*": [
         "miniprogram/node_modules/@vant/weapp/dist/*"
