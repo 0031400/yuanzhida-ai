@@ -4,6 +4,7 @@ export interface CommentItem {
   id: number
   questionId: number
   content: string
+  images?: string
   username: string
   avatar?: string
   likeCount: number

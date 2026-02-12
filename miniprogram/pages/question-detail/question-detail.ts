@@ -1,4 +1,5 @@
 import { getQuestionCommentPage, publishComment } from '../../api/comment'
+import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
 import { getQuestionDetail } from '../../api/question'
 import { authStore } from '../../store/auth.store'
@@ -9,6 +10,7 @@ import { pickErrorMessage } from '../../utils/error'
 
 interface CommentCard extends CommentItem {
   createTimeText: string
+  imageList: string[]
 }
 
 interface QuestionDetailQuery {
@@ -18,6 +20,7 @@ interface QuestionDetailQuery {
 type InputEvent = WechatMiniprogram.CustomEvent<{ value: string }>
 
 const DEFAULT_PAGE_SIZE = 10
+const MAX_COMMENT_IMAGE_COUNT = 3
 
 const normalizeImageUrl = (url: string): string => {
   const trimmed = url.trim()
@@ -62,6 +65,7 @@ Page({
     commentCurrent: 1,
     commentSize: DEFAULT_PAGE_SIZE,
     commentDraft: '',
+    commentImagePaths: [] as string[],
     submittingComment: false,
   },
   onLoad(query: QuestionDetailQuery) {
@@ -137,6 +141,7 @@ Page({
       const records = page.records.map((item) => ({
         ...item,
         createTimeText: formatDateTime(item.createTime),
+        imageList: parseImageList(item.images),
       }))
       const mergedComments = reset ? records : [...this.data.comments, ...records]
       const hasMoreComments = page.current * page.size < page.total
@@ -163,6 +168,57 @@ Page({
       commentDraft: value,
     })
   },
+  async onChooseCommentImages(): Promise<void> {
+    const currentCount = this.data.commentImagePaths.length
+    if (currentCount >= MAX_COMMENT_IMAGE_COUNT) {
+      wx.showToast({
+        title: `最多上传 ${MAX_COMMENT_IMAGE_COUNT} 张`,
+        icon: 'none',
+      })
+      return
+    }
+
+    try {
+      const result = await wx.chooseImage({
+        count: MAX_COMMENT_IMAGE_COUNT - currentCount,
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+      })
+      const next = [...this.data.commentImagePaths, ...result.tempFilePaths].slice(0, MAX_COMMENT_IMAGE_COUNT)
+      this.setData({
+        commentImagePaths: next,
+      })
+    } catch (_error) {
+      // user cancel should be silent
+    }
+  },
+  onRemoveCommentImage(event: WechatMiniprogram.TouchEvent): void {
+    const rawIndex = event.currentTarget.dataset.index
+    const index = typeof rawIndex === 'number' ? rawIndex : Number(rawIndex)
+    if (!Number.isFinite(index)) {
+      return
+    }
+    const next = [...this.data.commentImagePaths]
+    next.splice(index, 1)
+    this.setData({
+      commentImagePaths: next,
+    })
+  },
+  onPreviewCommentDraftImage(event: WechatMiniprogram.TouchEvent): void {
+    const rawIndex = event.currentTarget.dataset.index
+    const index = typeof rawIndex === 'number' ? rawIndex : Number(rawIndex)
+    if (!Number.isFinite(index)) {
+      return
+    }
+    const urls = this.data.commentImagePaths
+    if (urls.length === 0) {
+      return
+    }
+    wx.previewImage({
+      current: urls[index],
+      urls,
+    })
+  },
   async onSubmitComment(): Promise<void> {
     if (this.data.submittingComment) {
       return
@@ -183,9 +239,9 @@ Page({
     }
 
     const content = this.data.commentDraft.trim()
-    if (content.length === 0) {
+    if (content.length === 0 && this.data.commentImagePaths.length === 0) {
       wx.showToast({
-        title: '请输入评论内容',
+        title: '请输入评论内容或添加图片',
         icon: 'none',
       })
       return
@@ -193,9 +249,12 @@ Page({
 
     this.setData({ submittingComment: true })
     try {
+      const uploadedImages = await Promise.all(this.data.commentImagePaths.map(uploadImage))
+      const images = uploadedImages.join(',')
       await publishComment({
         questionId: this.data.questionId,
         content,
+        images,
       })
       const currentQuestion = this.data.question
       if (currentQuestion) {
@@ -208,6 +267,7 @@ Page({
       }
       this.setData({
         commentDraft: '',
+        commentImagePaths: [],
       })
       wx.showToast({
         title: '评论成功',
@@ -236,6 +296,23 @@ Page({
     wx.previewImage({
       current: urls[index],
       urls,
+    })
+  },
+  onPreviewCommentImage(event: WechatMiniprogram.TouchEvent) {
+    const rawCommentIndex = event.currentTarget.dataset.commentIndex
+    const rawImageIndex = event.currentTarget.dataset.imageIndex
+    const commentIndex = typeof rawCommentIndex === 'number' ? rawCommentIndex : Number(rawCommentIndex)
+    const imageIndex = typeof rawImageIndex === 'number' ? rawImageIndex : Number(rawImageIndex)
+    if (!Number.isFinite(commentIndex) || !Number.isFinite(imageIndex)) {
+      return
+    }
+    const comment = this.data.comments[commentIndex]
+    if (!comment || !comment.imageList || comment.imageList.length === 0) {
+      return
+    }
+    wx.previewImage({
+      current: comment.imageList[imageIndex],
+      urls: comment.imageList,
     })
   },
 })

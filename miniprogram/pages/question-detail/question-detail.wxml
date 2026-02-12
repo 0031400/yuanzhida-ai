@@ -47,14 +47,28 @@
       </block>
 
       <block wx:else>
-        <view class="comment-card" wx:for="{{comments}}" wx:key="id">
+        <view class="comment-card" wx:for="{{comments}}" wx:key="id" wx:for-item="comment" wx:for-index="commentIndex">
           <view class="comment-head">
-            <text class="comment-user">{{item.username}}</text>
-            <text class="comment-time">{{item.createTimeText}}</text>
+            <text class="comment-user">{{comment.username}}</text>
+            <text class="comment-time">{{comment.createTimeText}}</text>
           </view>
-          <text class="comment-content">{{item.content}}</text>
+          <text class="comment-content">{{comment.content}}</text>
+          <view class="comment-image-grid" wx:if="{{comment.imageList.length > 0}}">
+            <image
+              wx:for="{{comment.imageList}}"
+              wx:key="*this"
+              wx:for-item="image"
+              wx:for-index="imageIndex"
+              class="comment-image"
+              src="{{image}}"
+              mode="aspectFill"
+              data-comment-index="{{commentIndex}}"
+              data-image-index="{{imageIndex}}"
+              bindtap="onPreviewCommentImage"
+            />
+          </view>
           <view class="comment-meta">
-            <text class="comment-like">点赞 {{item.likeCount}}</text>
+            <text class="comment-like">点赞 {{comment.likeCount}}</text>
           </view>
         </view>
       </block>
@@ -67,24 +81,42 @@
   </scroll-view>
 
   <view class="comment-bar">
-    <input
-      class="comment-input"
-      type="text"
-      maxlength="300"
-      placeholder="写下你的评论..."
-      value="{{commentDraft}}"
-      bindinput="onCommentInput"
-      confirm-type="send"
-      bindconfirm="onSubmitComment"
-    />
-    <van-button
-      custom-class="comment-send-btn"
-      type="primary"
-      size="small"
-      loading="{{submittingComment}}"
-      bind:tap="onSubmitComment"
-    >
-      发送
-    </van-button>
+    <view class="draft-image-grid" wx:if="{{commentImagePaths.length > 0}}">
+      <view wx:for="{{commentImagePaths}}" wx:key="*this" class="draft-image-item">
+        <image
+          class="draft-image"
+          src="{{item}}"
+          mode="aspectFill"
+          data-index="{{index}}"
+          bindtap="onPreviewCommentDraftImage"
+        />
+        <view class="draft-image-remove" data-index="{{index}}" bindtap="onRemoveCommentImage">×</view>
+      </view>
+    </view>
+    <view class="comment-actions">
+      <view class="pick-image-btn" bindtap="onChooseCommentImages">+ 图片</view>
+      <text class="pick-image-tip">{{commentImagePaths.length}} / 3</text>
+    </view>
+    <view class="comment-input-row">
+      <input
+        class="comment-input"
+        type="text"
+        maxlength="300"
+        placeholder="写下评论，可带图片..."
+        value="{{commentDraft}}"
+        bindinput="onCommentInput"
+        confirm-type="send"
+        bindconfirm="onSubmitComment"
+      />
+      <van-button
+        custom-class="comment-send-btn"
+        type="primary"
+        size="small"
+        loading="{{submittingComment}}"
+        bind:tap="onSubmitComment"
+      >
+        发送
+      </van-button>
+    </view>
   </view>
 </view>
