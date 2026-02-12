@@ -147,6 +147,18 @@ page {
   border: 1rpx solid #93c5fd;
 }
 
+.resolve-action-btn.like-idle {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1rpx solid #fecdd3;
+}
+
+.resolve-action-btn.like-active {
+  background: #ffe4e6;
+  color: #9f1239;
+  border: 1rpx solid #fda4af;
+}
+
 .resolve-action-btn.disabled {
   opacity: 0.65;
 }

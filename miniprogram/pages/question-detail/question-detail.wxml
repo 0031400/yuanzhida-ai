@@ -32,6 +32,12 @@
           </view>
           <view class="question-action-group">
             <view
+              class="resolve-action-btn like-btn {{question.likeStatus === '已点赞' ? 'like-active' : 'like-idle'}} {{togglingLike ? 'disabled' : ''}}"
+              bindtap="onToggleLikeQuestion"
+            >
+              {{togglingLike ? '处理中...' : (question.likeStatus === '已点赞' ? '取消点赞' : '点赞问题')}}
+            </view>
+            <view
               class="resolve-action-btn collect-btn {{question.collectStatus === '已收藏' ? 'collect-active' : 'collect-idle'}} {{togglingCollect ? 'disabled' : ''}}"
               bindtap="onToggleCollectQuestion"
             >

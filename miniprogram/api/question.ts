@@ -52,3 +52,13 @@ export const toggleQuestionCollect = (payload: { id: number; entityUserId?: numb
       entityUserId: payload.entityUserId,
     },
   })
+
+export const toggleQuestionLike = (payload: { id: number; entityUserId?: number }) =>
+  request<null, { id: number; entityUserId?: number }>({
+    url: '/api/answerly/v1/question/like',
+    method: 'POST',
+    data: {
+      id: payload.id,
+      entityUserId: payload.entityUserId,
+    },
+  })

@@ -7,7 +7,12 @@ import {
 } from '../../api/comment'
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
-import { getQuestionDetail, resolveQuestion, toggleQuestionCollect } from '../../api/question'
+import {
+  getQuestionDetail,
+  resolveQuestion,
+  toggleQuestionCollect,
+  toggleQuestionLike,
+} from '../../api/question'
 import { authStore } from '../../store/auth.store'
 import type { CommentItem } from '../../types/comment'
 import type { QuestionDetail } from '../../types/question'
@@ -82,6 +87,7 @@ Page({
     canResolveQuestion: false,
     resolvingQuestion: false,
     togglingCollect: false,
+    togglingLike: false,
   },
   onLoad(query: QuestionDetailQuery) {
     const auth = authStore.hydrate()
@@ -200,6 +206,58 @@ Page({
     }
     const statusText = String(question.collectStatus)
     return statusText.indexOf('已收藏') >= 0 || statusText === '1' || statusText.toLowerCase() === 'true'
+  },
+  isLiked(): boolean {
+    const question = this.data.question
+    if (!question || question.likeStatus === undefined || question.likeStatus === null) {
+      return false
+    }
+    const statusText = String(question.likeStatus)
+    return statusText.indexOf('已点赞') >= 0 || statusText === '1' || statusText.toLowerCase() === 'true'
+  },
+  async onToggleLikeQuestion(): Promise<void> {
+    if (this.data.togglingLike) {
+      return
+    }
+    const question = this.data.question
+    if (!question) {
+      return
+    }
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+
+    this.setData({ togglingLike: true })
+    try {
+      const payload: { id: number; entityUserId?: number } = { id: question.id }
+      const entityUserId =
+        question.userId !== undefined && question.userId !== null ? Number(question.userId) : NaN
+      if (Number.isFinite(entityUserId)) {
+        payload.entityUserId = entityUserId
+      }
+      const wasLiked = this.isLiked()
+      await toggleQuestionLike(payload)
+      const nextLiked = !wasLiked
+      const nextLikeCount = nextLiked ? question.likeCount + 1 : question.likeCount > 0 ? question.likeCount - 1 : 0
+      this.setData({
+        question: {
+          ...question,
+          likeCount: nextLikeCount,
+          likeStatus: nextLiked ? '已点赞' : '未点赞',
+        },
+      })
+      wx.showToast({
+        title: nextLiked ? '已点赞' : '已取消点赞',
+        icon: 'success',
+      })
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '点赞操作失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ togglingLike: false })
+    }
   },
   async onToggleCollectQuestion(): Promise<void> {
     if (this.data.togglingCollect) {
