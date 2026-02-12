@@ -28,7 +28,7 @@ interface QuestionDetailQuery {
 type InputEvent = WechatMiniprogram.CustomEvent<{ value: string }>
 
 const DEFAULT_PAGE_SIZE = 10
-const MAX_COMMENT_IMAGE_COUNT = 3
+const MAX_COMMENT_IMAGE_COUNT = 9
 
 const normalizeImageUrl = (url: string): string => {
   const trimmed = url.trim()

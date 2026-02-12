@@ -35,7 +35,7 @@
     </view>
 
     <view class="section">
-      <view class="section-title">上传图片（最多 3 张）</view>
+      <view class="section-title">上传图片（最多 9 张）</view>
       <view class="image-grid">
         <view
           wx:for="{{imagePaths}}"
@@ -45,7 +45,7 @@
           <image class="image" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="onPreviewImage" />
           <view class="remove" data-index="{{index}}" bindtap="onRemoveImage">×</view>
         </view>
-        <view wx:if="{{imagePaths.length < 3}}" class="add-image" bindtap="onChooseImages">
+        <view wx:if="{{imagePaths.length < 9}}" class="add-image" bindtap="onChooseImages">
           <text class="add-text">+ 添加</text>
         </view>
       </view>

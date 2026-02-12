@@ -223,7 +223,7 @@
     </view>
     <view class="comment-actions">
       <view class="pick-image-btn" bindtap="onChooseCommentImages">+ 图片</view>
-      <text class="pick-image-tip">{{commentImagePaths.length}} / 3</text>
+      <text class="pick-image-tip">{{commentImagePaths.length}} / 9</text>
     </view>
     <view class="comment-input-row">
       <textarea

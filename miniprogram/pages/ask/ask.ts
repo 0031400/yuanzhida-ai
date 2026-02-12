@@ -7,7 +7,7 @@ import { isNonEmpty } from '../../utils/validate'
 
 type TapEvent = WechatMiniprogram.TouchEvent
 
-const MAX_IMAGE_COUNT = 3
+const MAX_IMAGE_COUNT = 9
 Page({
   data: {
     title: '',
