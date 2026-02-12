@@ -25,19 +25,17 @@
           <text class="meta">评 {{question.commentCount}}</text>
         </view>
         <view class="question-action-row">
-          <text class="solve-tag {{question.solvedFlag === 1 ? 'resolved' : 'pending'}}">
-            {{question.solvedFlag === 1 ? '已解决' : '待解决'}}
-          </text>
-          <van-button
+          <view class="solve-status-block {{question.solvedFlag === 1 ? 'resolved' : 'pending'}}">
+            <view class="solve-dot"></view>
+            <text class="solve-status-title">{{question.solvedFlag === 1 ? '该问题已解决' : '该问题待解决'}}</text>
+          </view>
+          <view
             wx:if="{{canResolveQuestion}}"
-            custom-class="resolve-btn"
-            type="primary"
-            size="small"
-            loading="{{resolvingQuestion}}"
-            bind:tap="onMarkResolved"
+            class="resolve-action-btn {{question.solvedFlag === 1 ? 'cancel' : 'confirm'}} {{resolvingQuestion ? 'disabled' : ''}}"
+            bindtap="onMarkResolved"
           >
-            {{question.solvedFlag === 1 ? '取消已解决' : '标记已解决'}}
-          </van-button>
+            {{resolvingQuestion ? '处理中...' : (question.solvedFlag === 1 ? '取消已解决' : '标记已解决')}}
+          </view>
         </view>
 
         <view class="image-grid" wx:if="{{imageList.length > 0}}">
