@@ -108,6 +108,12 @@ Page({
       this.onGoMessageTap()
       return
     }
+    if (key === 'my-comment') {
+      wx.navigateTo({
+        url: '/pages/my-comment/my-comment',
+      })
+      return
+    }
     wx.showToast({
       title: '该功能建设中',
       icon: 'none',

@@ -44,3 +44,10 @@ export const toggleCommentUseful = (id: number) =>
     method: 'POST',
     data: { id },
   })
+
+export const getMyCommentPage = (current: number, size: number) =>
+  request<CommentPage, { current: number; size: number }>({
+    url: '/api/answerly/v1/comment/my/page',
+    method: 'GET',
+    data: { current, size },
+  })
