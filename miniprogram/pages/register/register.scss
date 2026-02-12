@@ -31,8 +31,10 @@
 }
 
 .send-btn {
-  margin-left: 16rpx !important;
-  min-width: 170rpx;
+  margin-left: 10rpx !important;
+  width: auto !important;
+  min-width: 154rpx !important;
+  flex-shrink: 0;
 }
 
 .action-row {

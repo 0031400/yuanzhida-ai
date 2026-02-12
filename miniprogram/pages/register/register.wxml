@@ -16,6 +16,7 @@
       />
       <van-button
         custom-class="send-btn"
+        custom-style="padding: 0 16rpx;"
         size="small"
         type="primary"
         plain="{{true}}"
