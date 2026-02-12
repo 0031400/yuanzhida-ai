@@ -56,6 +56,12 @@ page {
   gap: 16rpx;
 }
 
+.question-action-group {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
 .solve-status-block {
   flex: 1;
   min-width: 0;
@@ -127,6 +133,18 @@ page {
   background: #fff;
   border: 1rpx solid #fca5a5;
   color: #b91c1c;
+}
+
+.resolve-action-btn.collect-idle {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1rpx solid #bfdbfe;
+}
+
+.resolve-action-btn.collect-active {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1rpx solid #93c5fd;
 }
 
 .resolve-action-btn.disabled {

@@ -42,3 +42,13 @@ export const resolveQuestion = (id: number) =>
     method: 'POST',
     data: { id },
   })
+
+export const toggleQuestionCollect = (payload: { id: number; entityUserId?: number }) =>
+  request<null, { id: number; entityUserId?: number }>({
+    url: '/api/answerly/v1/question/collect',
+    method: 'POST',
+    data: {
+      id: payload.id,
+      entityUserId: payload.entityUserId,
+    },
+  })

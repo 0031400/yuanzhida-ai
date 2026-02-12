@@ -23,18 +23,27 @@
           <text class="meta">{{questionTimeText}}</text>
           <text class="meta">赞 {{question.likeCount}}</text>
           <text class="meta">评 {{question.commentCount}}</text>
+          <text class="meta">藏 {{question.collectCount}}</text>
         </view>
         <view class="question-action-row">
           <view class="solve-status-block {{question.solvedFlag === 1 ? 'resolved' : 'pending'}}">
             <view class="solve-dot"></view>
             <text class="solve-status-title">{{question.solvedFlag === 1 ? '该问题已解决' : '该问题待解决'}}</text>
           </view>
-          <view
-            wx:if="{{canResolveQuestion}}"
-            class="resolve-action-btn {{question.solvedFlag === 1 ? 'cancel' : 'confirm'}} {{resolvingQuestion ? 'disabled' : ''}}"
-            bindtap="onMarkResolved"
-          >
-            {{resolvingQuestion ? '处理中...' : (question.solvedFlag === 1 ? '取消已解决' : '标记已解决')}}
+          <view class="question-action-group">
+            <view
+              class="resolve-action-btn collect-btn {{question.collectStatus === '已收藏' ? 'collect-active' : 'collect-idle'}} {{togglingCollect ? 'disabled' : ''}}"
+              bindtap="onToggleCollectQuestion"
+            >
+              {{togglingCollect ? '处理中...' : (question.collectStatus === '已收藏' ? '取消收藏' : '收藏问题')}}
+            </view>
+            <view
+              wx:if="{{canResolveQuestion}}"
+              class="resolve-action-btn {{question.solvedFlag === 1 ? 'cancel' : 'confirm'}} {{resolvingQuestion ? 'disabled' : ''}}"
+              bindtap="onMarkResolved"
+            >
+              {{resolvingQuestion ? '处理中...' : (question.solvedFlag === 1 ? '取消已解决' : '标记已解决')}}
+            </view>
           </view>
         </view>
 

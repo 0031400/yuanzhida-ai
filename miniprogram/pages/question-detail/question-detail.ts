@@ -7,7 +7,7 @@ import {
 } from '../../api/comment'
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
-import { getQuestionDetail, resolveQuestion } from '../../api/question'
+import { getQuestionDetail, resolveQuestion, toggleQuestionCollect } from '../../api/question'
 import { authStore } from '../../store/auth.store'
 import type { CommentItem } from '../../types/comment'
 import type { QuestionDetail } from '../../types/question'
@@ -81,6 +81,7 @@ Page({
     currentUsername: '',
     canResolveQuestion: false,
     resolvingQuestion: false,
+    togglingCollect: false,
   },
   onLoad(query: QuestionDetailQuery) {
     const auth = authStore.hydrate()
@@ -190,6 +191,62 @@ Page({
       })
     } finally {
       this.setData({ resolvingQuestion: false })
+    }
+  },
+  isCollected(): boolean {
+    const question = this.data.question
+    if (!question || question.collectStatus === undefined || question.collectStatus === null) {
+      return false
+    }
+    const statusText = String(question.collectStatus)
+    return statusText.indexOf('已收藏') >= 0 || statusText === '1' || statusText.toLowerCase() === 'true'
+  },
+  async onToggleCollectQuestion(): Promise<void> {
+    if (this.data.togglingCollect) {
+      return
+    }
+    const question = this.data.question
+    if (!question) {
+      return
+    }
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+
+    this.setData({ togglingCollect: true })
+    try {
+      const payload: { id: number; entityUserId?: number } = { id: question.id }
+      const entityUserId =
+        question.userId !== undefined && question.userId !== null ? Number(question.userId) : NaN
+      if (Number.isFinite(entityUserId)) {
+        payload.entityUserId = entityUserId
+      }
+      const wasCollected = this.isCollected()
+      await toggleQuestionCollect(payload)
+      const nextCollected = !wasCollected
+      const nextCollectCount = nextCollected
+        ? question.collectCount + 1
+        : question.collectCount > 0
+          ? question.collectCount - 1
+          : 0
+      this.setData({
+        question: {
+          ...question,
+          collectCount: nextCollectCount,
+          collectStatus: nextCollected ? '已收藏' : '未收藏',
+        },
+      })
+      wx.showToast({
+        title: nextCollected ? '已收藏' : '已取消收藏',
+        icon: 'success',
+      })
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '收藏操作失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ togglingCollect: false })
     }
   },
   async loadComments(reset: boolean): Promise<void> {
