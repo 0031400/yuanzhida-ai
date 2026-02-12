@@ -1,6 +1,6 @@
 import { envConfig } from '../config/index'
 import { authStore } from '../store/auth.store'
-import type { ApiResponse, RequestError } from '../types/api'
+import type { ApiResponse } from '../types/api'
 import { getErrorMessage } from './error-map'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
@@ -10,35 +10,14 @@ export interface RequestOptions<TData> {
   method?: HttpMethod
   data?: TData
   authRequired?: boolean
-  showErrorToast?: boolean
   headers?: WechatMiniprogram.IAnyObject
 }
 
 const SUCCESS_CODE = '0'
-const UNAUTHORIZED_CODE = 'A000204'
 
 const joinUrl = (url: string): string => {
   if (/^https?:\/\//.test(url)) return url
   return `${envConfig.baseUrl}${url}`
-}
-
-const showErrorToast = (message: string): void => {
-  wx.showToast({
-    title: message,
-    icon: 'none',
-    duration: 2000,
-  })
-}
-
-const handleUnauthorized = (): void => {
-  authStore.clearAuth()
-  if (getCurrentPages().length === 0) return
-  wx.navigateTo({
-    url: '/pages/login/login',
-    fail: () => {
-      // login page may be unavailable before MVP pages are scaffolded.
-    },
-  })
 }
 
 export const request = <TResponse, TData = WechatMiniprogram.IAnyObject>(
@@ -49,7 +28,6 @@ export const request = <TResponse, TData = WechatMiniprogram.IAnyObject>(
     method = 'GET',
     data,
     authRequired = true,
-    showErrorToast: shouldShowErrorToast = true,
     headers = {},
   } = options
 
@@ -76,9 +54,12 @@ export const request = <TResponse, TData = WechatMiniprogram.IAnyObject>(
       success: (res) => {
         const payload = res.data as ApiResponse<TResponse> | undefined
         if (!payload) {
-          const error: RequestError = { code: 'NETWORK_EMPTY_RESPONSE', message: '服务端返回为空' }
-          if (shouldShowErrorToast) showErrorToast(error.message)
-          reject(error)
+          reject('服务端返回为空')
+          return
+        }
+
+        if (typeof payload.code !== 'string') {
+          reject('响应格式错误')
           return
         }
 
@@ -88,15 +69,10 @@ export const request = <TResponse, TData = WechatMiniprogram.IAnyObject>(
         }
 
         const message = getErrorMessage(payload.code, payload.message)
-        const error: RequestError = { code: payload.code, message }
-        if (payload.code === UNAUTHORIZED_CODE) handleUnauthorized()
-        if (shouldShowErrorToast) showErrorToast(message)
-        reject(error)
+        reject(message)
       },
       fail: () => {
-        const error: RequestError = { code: 'NETWORK_FAIL', message: '网络异常，请稍后重试' }
-        if (shouldShowErrorToast) showErrorToast(error.message)
-        reject(error)
+        reject('网络异常，请稍后重试')
       },
     })
   })

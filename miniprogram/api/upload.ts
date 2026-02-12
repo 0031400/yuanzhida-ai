@@ -15,16 +15,20 @@ export const uploadImage = (filePath: string): Promise<string> => {
         try {
           payload = JSON.parse(res.data) as { code: string; message: string | null; data: string }
         } catch (_error) {
-          reject(new Error('上传响应解析失败'))
+          reject('上传响应解析失败')
+          return
+        }
+        if (typeof payload.code !== 'string') {
+          reject('响应格式错误')
           return
         }
         if (payload.code !== '0') {
-          reject(new Error(payload.message ?? '上传失败'))
+          reject(payload.message ?? '上传失败')
           return
         }
         resolve(payload.data)
       },
-      fail: () => reject(new Error('上传失败，请检查网络')),
+      fail: () => reject('上传失败，请检查网络'),
     })
   })
 }

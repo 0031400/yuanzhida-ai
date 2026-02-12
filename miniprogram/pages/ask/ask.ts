@@ -7,6 +7,8 @@ import { isNonEmpty } from '../../utils/validate'
 type TapEvent = WechatMiniprogram.TouchEvent
 
 const MAX_IMAGE_COUNT = 3
+const pickErrorMessage = (error: unknown, fallback: string): string =>
+  typeof error === 'string' && error.trim().length > 0 ? error : fallback
 
 Page({
   data: {
@@ -157,8 +159,11 @@ Page({
       setTimeout(() => {
         wx.navigateBack()
       }, 350)
-    } catch (_error) {
-      // request layer already toasts
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '发布失败'),
+        icon: 'none',
+      })
     } finally {
       this.setData({ submitting: false })
     }

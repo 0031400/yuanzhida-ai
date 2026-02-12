@@ -11,7 +11,7 @@ export interface EnvConfig {
 const ENV_CONFIG_MAP: Record<RuntimeEnv, EnvConfig> = {
   dev: {
     env: 'dev',
-    baseUrl: 'http://172.18.188.222:3000',
+    baseUrl: 'http://127.0.0.1:8000',
     timeout: 10000,
     assetBaseUrl: 'https://yuanzhida-cos-1352975306.cos.ap-beijing.myqcloud.com/',
   },

@@ -3,6 +3,8 @@ import { isNonEmpty } from '../../utils/validate'
 
 const CODE_SECONDS = 60
 let countdownTimer: number | null = null
+const pickErrorMessage = (error: unknown, fallback: string): string =>
+  typeof error === 'string' && error.trim().length > 0 ? error : fallback
 
 const isEmail = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
@@ -60,8 +62,11 @@ Page({
         icon: 'success',
       })
       this.startCountdown()
-    } catch (_error) {
-      // request.ts already handles toast.
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '验证码发送失败'),
+        icon: 'none',
+      })
     } finally {
       this.setData({ sendingCode: false })
     }
@@ -121,8 +126,11 @@ Page({
       setTimeout(() => {
         wx.navigateBack()
       }, 300)
-    } catch (_error) {
-      // request.ts already handles toast.
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '注册失败'),
+        icon: 'none',
+      })
     } finally {
       this.setData({ submitting: false })
     }
