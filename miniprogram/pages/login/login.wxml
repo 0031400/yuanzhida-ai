@@ -37,5 +37,6 @@
       </van-button>
     </view>
     <text class="captcha-tip" bindtap="refreshCaptcha">看不清？点击验证码图片刷新</text>
+    <text class="register-tip" bindtap="goRegister">还没有账号？去注册</text>
   </view>
 </view>

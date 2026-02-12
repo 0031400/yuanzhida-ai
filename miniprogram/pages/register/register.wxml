@@ -1,0 +1,43 @@
+<navigation-bar title="注册" back="{{true}}" color="black" background="#fff"></navigation-bar>
+
+<view class="page">
+  <view class="title">创建账号</view>
+  <view class="subtitle">注册后即可提问与参与讨论</view>
+
+  <view class="form-card">
+    <van-field label="用户名" model:value="{{username}}" placeholder="请输入用户名" />
+    <van-field label="邮箱" model:value="{{mail}}" placeholder="请输入学校邮箱" />
+    <view class="code-row">
+      <van-field
+        custom-style="flex: 1;"
+        label="验证码"
+        model:value="{{code}}"
+        placeholder="请输入邮箱验证码"
+      />
+      <van-button
+        custom-class="send-btn"
+        size="small"
+        type="primary"
+        plain="{{true}}"
+        disabled="{{sendingCode || countdown > 0}}"
+        bind:tap="onSendCode"
+      >
+        {{countdown > 0 ? countdown + 's' : '发送验证码'}}
+      </van-button>
+    </view>
+    <van-field label="密码" model:value="{{password}}" placeholder="请输入密码" password="{{true}}" />
+    <van-field
+      label="确认密码"
+      model:value="{{confirmPassword}}"
+      placeholder="请再次输入密码"
+      password="{{true}}"
+    />
+
+    <view class="action-row">
+      <van-button type="primary" block="{{true}}" loading="{{submitting}}" bind:tap="onSubmit">
+        注册
+      </van-button>
+    </view>
+    <text class="login-tip" bindtap="goLogin">已有账号？去登录</text>
+  </view>
+</view>

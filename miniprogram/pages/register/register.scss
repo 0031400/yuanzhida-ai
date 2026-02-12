@@ -25,36 +25,24 @@
   background: $color-bg-card;
 }
 
-.captcha-row {
+.code-row {
   display: flex;
   align-items: center;
 }
 
-.captcha-image {
-  width: 180rpx;
-  height: 72rpx;
-  margin-left: 16rpx;
-  border: 1rpx solid #e5e7eb;
-  border-radius: $radius-md;
-  background: #fff;
+.send-btn {
+  margin-left: 16rpx !important;
+  min-width: 170rpx;
 }
 
 .action-row {
   margin-top: 32rpx;
 }
 
-.captcha-tip {
+.login-tip {
   display: block;
   margin-top: 20rpx;
   text-align: center;
   color: $color-text-secondary;
-  font-size: 24rpx;
-}
-
-.register-tip {
-  display: block;
-  margin-top: 12rpx;
-  text-align: center;
-  color: $color-brand;
   font-size: 24rpx;
 }

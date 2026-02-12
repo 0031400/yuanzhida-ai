@@ -71,5 +71,10 @@ Component({
         this.setData({ submitting: false })
       }
     },
+    goRegister() {
+      wx.navigateTo({
+        url: '/pages/register/register',
+      })
+    },
   },
 })

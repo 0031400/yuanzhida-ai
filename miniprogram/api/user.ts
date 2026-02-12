@@ -1,4 +1,4 @@
-import type { LoginPayload, LoginResult, UserProfile } from '../types/user'
+import type { LoginPayload, LoginResult, RegisterPayload, UserProfile } from '../types/user'
 import { envConfig } from '../config/index'
 import { STORAGE_KEYS, storage } from '../utils/storage'
 import { request } from '../utils/request'
@@ -57,4 +57,20 @@ export const getUserProfile = (username: string) =>
     url: `/api/answerly/v1/user/${username}`,
     method: 'GET',
     authRequired: true,
+  })
+
+export const sendRegisterCode = (mail: string) =>
+  request<boolean>({
+    url: '/api/answerly/v1/user/send-code',
+    method: 'GET',
+    data: { mail },
+    authRequired: false,
+  })
+
+export const register = (payload: RegisterPayload) =>
+  request<null, RegisterPayload>({
+    url: '/api/answerly/v1/user',
+    method: 'POST',
+    data: payload,
+    authRequired: false,
   })

@@ -14,3 +14,10 @@ export interface UserProfile {
   avatar?: string
   introduction?: string
 }
+
+export interface RegisterPayload {
+  username: string
+  password: string
+  mail: string
+  code: string
+}
