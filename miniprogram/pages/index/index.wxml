@@ -36,6 +36,7 @@
   <scroll-view
     class="question-scroll"
     scroll-y="{{true}}"
+    lower-threshold="{{120}}"
     bindscrolltolower="onScrollToLower"
     refresher-enabled="{{true}}"
     refresher-triggered="{{refreshing}}"

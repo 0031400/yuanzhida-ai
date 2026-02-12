@@ -1,13 +1,13 @@
 @import '../../styles/variables.scss';
 
 page {
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
   background: #f5f7fb;
 }
 
 .page {
-  height: calc(100vh - 88rpx);
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -44,10 +44,12 @@ page {
 
 .question-scroll {
   flex: 1;
+  min-height: 0;
 }
 
 .content {
   padding: 24rpx;
+  padding-bottom: calc(220rpx + env(safe-area-inset-bottom));
 }
 
 .question-card {
@@ -133,7 +135,7 @@ page {
 .ask-fab {
   position: fixed;
   right: 26rpx;
-  bottom: 36rpx;
+  bottom: calc(120rpx + env(safe-area-inset-bottom));
   z-index: 20;
 }
 
