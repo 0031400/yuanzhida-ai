@@ -77,8 +77,8 @@
           <view class="card-head">
             <text class="status-tag {{item.solvedFlag === 1 ? 'resolved' : 'pending'}}">{{item.solvedText}}</text>
           </view>
-          <text class="title">{{item.title}}</text>
-          <text class="question-content">{{item.content}}</text>
+          <rich-text class="title rich-block" nodes="{{item.titleRich}}" />
+          <rich-text class="question-content rich-block" nodes="{{item.contentRich}}" />
           <view class="meta-row">
             <text class="meta">{{item.username}}</text>
             <text class="meta">{{item.createTimeText}}</text>

@@ -11,6 +11,8 @@ type TapEvent = WechatMiniprogram.TouchEvent
 interface QuestionCard extends QuestionItem {
   createTimeText: string
   solvedText: string
+  titleRich: string
+  contentRich: string
 }
 
 const ALL_CATEGORY_ID = 0
@@ -30,6 +32,13 @@ const toNumberId = (value: unknown): number => {
     }
   }
   return 0
+}
+
+const buildHighlightRichText = (raw: string): string => {
+  const safeText = String(raw || '').replace(/<(?!\/?em\b)[^>]*>/gi, '')
+  return safeText
+    .replace(/<em>/gi, '<span style="color:#b45309;font-weight:700;">')
+    .replace(/<\/em>/gi, '</span>')
 }
 
 Component({
@@ -150,6 +159,8 @@ Component({
         ...question,
         createTimeText: formatFromNow(question.createTime),
         solvedText: question.solvedFlag === 1 ? '已解决' : '待解决',
+        titleRich: buildHighlightRichText(question.title),
+        contentRich: buildHighlightRichText(question.content),
       }
     },
     async loadQuestions(reset: boolean): Promise<void> {
