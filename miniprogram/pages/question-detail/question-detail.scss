@@ -115,11 +115,32 @@ page {
 
 .comment-meta {
   margin-top: 10rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .comment-like {
   font-size: 22rpx;
   color: #6b7280;
+}
+
+.comment-reply-btn {
+  font-size: 22rpx;
+  color: #1677ff;
+}
+
+.child-comment-list {
+  margin-top: 14rpx;
+  padding: 14rpx;
+  border-radius: 12rpx;
+  background: #f8fafc;
+}
+
+.child-comment-item + .child-comment-item {
+  margin-top: 14rpx;
+  padding-top: 14rpx;
+  border-top: 1rpx solid #e5e7eb;
 }
 
 .comment-empty {
@@ -148,6 +169,26 @@ page {
   background: #fff;
   border-top: 1rpx solid #e5e7eb;
   box-shadow: 0 -8rpx 24rpx rgba(15, 23, 42, 0.04);
+}
+
+.reply-indicator {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12rpx;
+  padding: 10rpx 14rpx;
+  background: #eff6ff;
+}
+
+.reply-indicator-text {
+  font-size: 22rpx;
+  color: #1d4ed8;
+}
+
+.reply-indicator-cancel {
+  font-size: 22rpx;
+  color: #2563eb;
 }
 
 .draft-image-grid {

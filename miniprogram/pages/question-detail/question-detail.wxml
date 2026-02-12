@@ -69,6 +69,59 @@
           </view>
           <view class="comment-meta">
             <text class="comment-like">点赞 {{comment.likeCount}}</text>
+            <text
+              class="comment-reply-btn"
+              data-id="{{comment.id}}"
+              data-username="{{comment.username}}"
+              bindtap="onReplyTopComment"
+            >
+              回复
+            </text>
+          </view>
+
+          <view class="child-comment-list" wx:if="{{comment.childCards.length > 0}}">
+            <view
+              class="child-comment-item"
+              wx:for="{{comment.childCards}}"
+              wx:key="id"
+              wx:for-item="child"
+              wx:for-index="childIndex"
+            >
+              <view class="comment-head">
+                <text class="comment-user">{{child.username}}</text>
+                <text class="comment-time">{{child.createTimeText}}</text>
+              </view>
+              <text class="comment-content" wx:if="{{child.commentTo && child.commentTo.length > 0}}">
+                回复 {{child.commentTo}}：{{child.content}}
+              </text>
+              <text class="comment-content" wx:else>{{child.content}}</text>
+              <view class="comment-image-grid" wx:if="{{child.imageList.length > 0}}">
+                <image
+                  wx:for="{{child.imageList}}"
+                  wx:key="*this"
+                  wx:for-item="childImage"
+                  wx:for-index="childImageIndex"
+                  class="comment-image"
+                  src="{{childImage}}"
+                  mode="aspectFill"
+                  data-top-index="{{commentIndex}}"
+                  data-child-index="{{childIndex}}"
+                  data-image-index="{{childImageIndex}}"
+                  bindtap="onPreviewChildCommentImage"
+                />
+              </view>
+              <view class="comment-meta">
+                <text class="comment-like">点赞 {{child.likeCount}}</text>
+                <text
+                  class="comment-reply-btn"
+                  data-top-id="{{comment.id}}"
+                  data-username="{{child.username}}"
+                  bindtap="onReplyChildComment"
+                >
+                  回复
+                </text>
+              </view>
+            </view>
           </view>
         </view>
       </block>
@@ -81,6 +134,10 @@
   </scroll-view>
 
   <view class="comment-bar">
+    <view class="reply-indicator" wx:if="{{replyParentCommentId > 0}}">
+      <text class="reply-indicator-text">正在回复：{{replyToUsername}}</text>
+      <text class="reply-indicator-cancel" bindtap="onCancelReply">取消</text>
+    </view>
     <view class="draft-image-grid" wx:if="{{commentImagePaths.length > 0}}">
       <view wx:for="{{commentImagePaths}}" wx:key="*this" class="draft-image-item">
         <image

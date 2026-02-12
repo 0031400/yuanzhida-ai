@@ -11,6 +11,7 @@ import { pickErrorMessage } from '../../utils/error'
 interface CommentCard extends CommentItem {
   createTimeText: string
   imageList: string[]
+  childCards: CommentCard[]
 }
 
 interface QuestionDetailQuery {
@@ -67,6 +68,9 @@ Page({
     commentDraft: '',
     commentImagePaths: [] as string[],
     submittingComment: false,
+    replyParentCommentId: 0,
+    replyTopCommentId: 0,
+    replyToUsername: '',
   },
   onLoad(query: QuestionDetailQuery) {
     const questionId = Number(query.id)
@@ -138,11 +142,7 @@ Page({
         size: this.data.commentSize,
         id: this.data.questionId,
       })
-      const records = page.records.map((item) => ({
-        ...item,
-        createTimeText: formatDateTime(item.createTime),
-        imageList: parseImageList(item.images),
-      }))
+      const records = page.records.map((item) => this.toCommentCard(item))
       const mergedComments = reset ? records : [...this.data.comments, ...records]
       const hasMoreComments = page.current * page.size < page.total
       this.setData({
@@ -160,6 +160,52 @@ Page({
         commentLoadingMore: false,
       })
     }
+  },
+  toCommentCard(comment: CommentItem): CommentCard {
+    const source = comment as unknown as { childComments?: CommentItem[] }
+    const rawChildren = Array.isArray(source.childComments) ? source.childComments : []
+    const childCards = rawChildren.map((child) => this.toCommentCard({ ...child, childComments: [] }))
+
+    return {
+      ...comment,
+      createTimeText: formatDateTime(comment.createTime),
+      imageList: parseImageList(comment.images),
+      childCards,
+    }
+  },
+  onReplyTopComment(event: WechatMiniprogram.TouchEvent): void {
+    const rawId = event.currentTarget.dataset.id
+    const username = String(event.currentTarget.dataset.username || '')
+    const parentId = typeof rawId === 'number' ? rawId : Number(rawId)
+    if (!Number.isFinite(parentId) || parentId <= 0) {
+      return
+    }
+    this.setData({
+      replyParentCommentId: parentId,
+      replyTopCommentId: parentId,
+      replyToUsername: username,
+    })
+  },
+  onReplyChildComment(event: WechatMiniprogram.TouchEvent): void {
+    const rawTopId = event.currentTarget.dataset.topId
+    const username = String(event.currentTarget.dataset.username || '')
+    const topId = typeof rawTopId === 'number' ? rawTopId : Number(rawTopId)
+    if (!Number.isFinite(topId) || topId <= 0) {
+      return
+    }
+    // Enforce at most one child layer by always replying under top comment.
+    this.setData({
+      replyParentCommentId: topId,
+      replyTopCommentId: topId,
+      replyToUsername: username,
+    })
+  },
+  onCancelReply(): void {
+    this.setData({
+      replyParentCommentId: 0,
+      replyTopCommentId: 0,
+      replyToUsername: '',
+    })
   },
   onCommentInput(event: InputEvent): void {
     const detail = event.detail as { value?: string }
@@ -255,6 +301,8 @@ Page({
         questionId: this.data.questionId,
         content,
         images,
+        parentCommentId: this.data.replyParentCommentId,
+        topCommentId: this.data.replyTopCommentId,
       })
       const currentQuestion = this.data.question
       if (currentQuestion) {
@@ -268,6 +316,9 @@ Page({
       this.setData({
         commentDraft: '',
         commentImagePaths: [],
+        replyParentCommentId: 0,
+        replyTopCommentId: 0,
+        replyToUsername: '',
       })
       wx.showToast({
         title: '评论成功',
@@ -313,6 +364,29 @@ Page({
     wx.previewImage({
       current: comment.imageList[imageIndex],
       urls: comment.imageList,
+    })
+  },
+  onPreviewChildCommentImage(event: WechatMiniprogram.TouchEvent) {
+    const rawTopIndex = event.currentTarget.dataset.topIndex
+    const rawChildIndex = event.currentTarget.dataset.childIndex
+    const rawImageIndex = event.currentTarget.dataset.imageIndex
+    const topIndex = typeof rawTopIndex === 'number' ? rawTopIndex : Number(rawTopIndex)
+    const childIndex = typeof rawChildIndex === 'number' ? rawChildIndex : Number(rawChildIndex)
+    const imageIndex = typeof rawImageIndex === 'number' ? rawImageIndex : Number(rawImageIndex)
+    if (!Number.isFinite(topIndex) || !Number.isFinite(childIndex) || !Number.isFinite(imageIndex)) {
+      return
+    }
+    const topComment = this.data.comments[topIndex]
+    if (!topComment || !topComment.childCards || topComment.childCards.length <= childIndex) {
+      return
+    }
+    const childComment = topComment.childCards[childIndex]
+    if (!childComment || !childComment.imageList || childComment.imageList.length === 0) {
+      return
+    }
+    wx.previewImage({
+      current: childComment.imageList[imageIndex],
+      urls: childComment.imageList,
     })
   },
 })
