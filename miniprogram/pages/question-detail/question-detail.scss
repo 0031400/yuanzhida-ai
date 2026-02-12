@@ -51,20 +51,21 @@ page {
 .question-action-row {
   margin-top: 18rpx;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: 16rpx;
 }
 
 .question-action-group {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 12rpx;
 }
 
 .solve-status-block {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 10rpx;
@@ -83,9 +84,8 @@ page {
 .solve-status-title {
   font-size: 24rpx;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
 }
 
 .solve-status-block.resolved {
