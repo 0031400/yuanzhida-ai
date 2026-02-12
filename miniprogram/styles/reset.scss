@@ -1,0 +1,27 @@
+@import 'variables.scss';
+
+view,
+text,
+image,
+button,
+input,
+textarea,
+scroll-view,
+swiper,
+swiper-item,
+navigator {
+  box-sizing: border-box;
+}
+
+page {
+  min-height: 100%;
+  background: $color-bg-page;
+  color: $color-text-primary;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}

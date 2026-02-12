@@ -1,15 +1,24 @@
 {
   "name": "miniprogram-ts-sass-quickstart",
   "version": "1.0.0",
-  "description": "",
+  "description": "Freshman QA WeChat Mini Program",
   "scripts": {
+    "lint": "eslint --ext .ts miniprogram",
+    "format": "prettier --write \"miniprogram/**/*.{ts,scss,json,wxml}\""
   },
   "keywords": [],
   "author": "",
-  "license": "",
+  "license": "MIT",
   "dependencies": {
+    "@vant/weapp": "^1.11.7",
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
-    "miniprogram-api-typings": "^2.8.3-1"
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "miniprogram-api-typings": "^2.8.3-1",
+    "prettier": "^3.6.2"
   }
 }

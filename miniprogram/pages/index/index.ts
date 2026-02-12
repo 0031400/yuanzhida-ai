@@ -1,6 +1,6 @@
-// index.ts
-// 获取应用实例
-const app = getApp<IAppOption>()
+type ChooseAvatarEvent = WechatMiniprogram.CustomEvent<{ avatarUrl: string }>
+type NicknameInputEvent = WechatMiniprogram.CustomEvent<{ value: string }>
+
 const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 
 Component({
@@ -21,7 +21,7 @@ Component({
         url: '../logs/logs',
       })
     },
-    onChooseAvatar(e: any) {
+    onChooseAvatar(e: ChooseAvatarEvent) {
       const { avatarUrl } = e.detail
       const { nickName } = this.data.userInfo
       this.setData({
@@ -29,7 +29,7 @@ Component({
         hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
       })
     },
-    onInputChange(e: any) {
+    onInputChange(e: NicknameInputEvent) {
       const nickName = e.detail.value
       const { avatarUrl } = this.data.userInfo
       this.setData({

@@ -1,17 +1,20 @@
-// app.ts
+import { appStore } from './store/app.store'
+import { authStore } from './store/auth.store'
+
 App<IAppOption>({
   globalData: {},
   onLaunch() {
-    // 展示本地存储能力
+    authStore.hydrate()
+    appStore.reset()
+
     const logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
 
-    // 登录
     wx.login({
       success: res => {
-        console.log(res.code)
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        if (!res.code) return
+        // TODO: send code to backend for session exchange.
       },
     })
   },
