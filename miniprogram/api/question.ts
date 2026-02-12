@@ -35,3 +35,10 @@ export const publishQuestion = (payload: PublishQuestionPayload) =>
       images: joinImages(payload.images),
     },
   })
+
+export const resolveQuestion = (id: number) =>
+  request<null, { id: number }>({
+    url: '/api/answerly/v1/question/resolved',
+    method: 'POST',
+    data: { id },
+  })

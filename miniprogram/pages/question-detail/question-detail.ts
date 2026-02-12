@@ -1,7 +1,7 @@
 import { deleteComment, getQuestionCommentPage, likeComment, publishComment } from '../../api/comment'
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
-import { getQuestionDetail } from '../../api/question'
+import { getQuestionDetail, resolveQuestion } from '../../api/question'
 import { authStore } from '../../store/auth.store'
 import type { CommentItem } from '../../types/comment'
 import type { QuestionDetail } from '../../types/question'
@@ -73,6 +73,8 @@ Page({
     replyTopCommentId: 0,
     replyToUsername: '',
     currentUsername: '',
+    canResolveQuestion: false,
+    resolvingQuestion: false,
   },
   onLoad(query: QuestionDetailQuery) {
     const auth = authStore.hydrate()
@@ -124,16 +126,64 @@ Page({
   async loadQuestionDetail(): Promise<void> {
     try {
       const detail = await getQuestionDetail(this.data.questionId)
+      const canResolveQuestion =
+        this.data.currentUsername.length > 0 &&
+        detail.username !== undefined &&
+        detail.username !== null &&
+        detail.username === this.data.currentUsername
       this.setData({
         question: detail,
         imageList: parseImageList(detail.images),
         questionTimeText: formatDateTime(detail.createTime),
+        canResolveQuestion,
       })
     } catch (_error) {
       wx.showToast({
         title: '题目加载失败',
         icon: 'none',
       })
+    }
+  },
+  async onMarkResolved(): Promise<void> {
+    if (this.data.resolvingQuestion) {
+      return
+    }
+    const question = this.data.question
+    if (!question) {
+      return
+    }
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    if (!this.data.canResolveQuestion) {
+      wx.showToast({
+        title: '仅题主可标记已解决',
+        icon: 'none',
+      })
+      return
+    }
+
+    this.setData({ resolvingQuestion: true })
+    try {
+      const nextSolvedFlag = question.solvedFlag === 1 ? 0 : 1
+      await resolveQuestion(question.id)
+      this.setData({
+        question: {
+          ...question,
+          solvedFlag: nextSolvedFlag,
+        },
+      })
+      wx.showToast({
+        title: nextSolvedFlag === 1 ? '已标记为已解决' : '已取消已解决',
+        icon: 'success',
+      })
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '标记失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ resolvingQuestion: false })
     }
   },
   async loadComments(reset: boolean): Promise<void> {
