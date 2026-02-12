@@ -1,8 +1,29 @@
-﻿<navigation-bar title="消息中心" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="消息中心" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="page">
-  <view class="card">
+  <view class="hero-card">
     <text class="title">消息中心</text>
-    <text class="desc">后续接入消息摘要和分类列表。</text>
+    <text class="desc">按互动类型查看通知，后续支持一键已读与筛选。</text>
   </view>
+
+  <view class="card">
+    <view class="item">
+      <text class="item-title">评论与回复</text>
+      <text class="item-arrow">></text>
+    </view>
+    <view class="item">
+      <text class="item-title">点赞通知</text>
+      <text class="item-arrow">></text>
+    </view>
+    <view class="item">
+      <text class="item-title">收藏与有用</text>
+      <text class="item-arrow">></text>
+    </view>
+    <view class="item">
+      <text class="item-title">系统消息</text>
+      <text class="item-arrow">></text>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
 </view>

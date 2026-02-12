@@ -134,9 +134,41 @@ page {
 
 .ask-fab {
   position: fixed;
-  right: 26rpx;
-  bottom: calc(120rpx + env(safe-area-inset-bottom));
+  right: 24rpx;
+  bottom: calc(134rpx + env(safe-area-inset-bottom));
   z-index: 20;
+  height: 76rpx;
+  padding: 0 22rpx 0 10rpx;
+  border-radius: 999rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  background: linear-gradient(135deg, #1677ff, #0f5fe0);
+  box-shadow: 0 12rpx 28rpx rgba(22, 119, 255, 0.35);
+}
+
+.ask-fab-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  font-size: 40rpx;
+  line-height: 56rpx;
+  text-align: center;
+  font-weight: 500;
+}
+
+.ask-fab-text {
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.ask-fab-hover {
+  transform: translateY(2rpx) scale(0.98);
+  opacity: 0.92;
 }
 
 .skeleton-card {

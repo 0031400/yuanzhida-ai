@@ -1,17 +1,18 @@
 page {
-  height: 100vh;
+  min-height: 100vh;
   background: #f5f7fb;
 }
 
 .page {
-  height: calc(100vh - 88rpx);
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .scroll {
   flex: 1;
-  padding: 24rpx 24rpx 140rpx;
+  min-height: 0;
+  padding: 24rpx 24rpx calc(176rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -117,8 +118,9 @@ page {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 20rpx 24rpx 28rpx;
+  padding: 20rpx 24rpx calc(24rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   background: #fff;
   border-top: 1rpx solid #e5e7eb;
+  box-shadow: 0 -8rpx 24rpx rgba(15, 23, 42, 0.04);
 }

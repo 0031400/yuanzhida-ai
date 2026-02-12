@@ -85,7 +85,8 @@
     </view>
   </scroll-view>
 
-  <view class="ask-fab" bindtap="onAskTap">
-    <van-button type="primary" size="small">去提问</van-button>
+  <view class="ask-fab" bindtap="onAskTap" hover-class="ask-fab-hover">
+    <view class="ask-fab-icon">+</view>
+    <text class="ask-fab-text">提问</text>
   </view>
 </view>

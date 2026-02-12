@@ -1,14 +1,16 @@
 page {
-  height: 100vh;
+  min-height: 100vh;
   background: #f5f7fb;
 }
 
 .page {
-  height: calc(100vh - 88rpx);
+  height: 100vh;
 }
 
 .scroll {
   height: 100%;
+  box-sizing: border-box;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 }
 
 .question-card {
