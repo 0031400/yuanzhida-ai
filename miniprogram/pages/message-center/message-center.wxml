@@ -1,0 +1,8 @@
+﻿<navigation-bar title="消息中心" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="page">
+  <view class="card">
+    <text class="title">消息中心</text>
+    <text class="desc">后续接入消息摘要和分类列表。</text>
+  </view>
+</view>
