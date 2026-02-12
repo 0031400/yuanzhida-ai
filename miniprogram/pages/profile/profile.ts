@@ -108,6 +108,12 @@ Page({
       this.onGoMessageTap()
       return
     }
+    if (key === 'my-question') {
+      wx.navigateTo({
+        url: '/pages/my-question/my-question',
+      })
+      return
+    }
     if (key === 'my-comment') {
       wx.navigateTo({
         url: '/pages/my-comment/my-comment',

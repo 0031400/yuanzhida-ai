@@ -4,6 +4,7 @@
     "pages/message-center/message-center",
     "pages/profile/profile",
     "pages/ask/ask",
+    "pages/my-question/my-question",
     "pages/my-comment/my-comment",
     "pages/my-collect/my-collect",
     "pages/my-recent/my-recent",

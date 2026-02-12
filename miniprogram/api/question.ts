@@ -76,3 +76,10 @@ export const getMyRecentQuestionPage = (current: number, size: number) =>
     method: 'GET',
     data: { current, size },
   })
+
+export const getMyQuestionPage = (current: number, size: number) =>
+  request<QuestionPage, { current: number; size: number }>({
+    url: '/api/answerly/v1/question/my/page',
+    method: 'GET',
+    data: { current, size },
+  })
