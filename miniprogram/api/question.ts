@@ -62,3 +62,10 @@ export const toggleQuestionLike = (payload: { id: number; entityUserId?: number 
       entityUserId: payload.entityUserId,
     },
   })
+
+export const getMyCollectQuestionPage = (current: number, size: number) =>
+  request<QuestionPage, { current: number; size: number }>({
+    url: '/api/answerly/v1/question/collect/my/page',
+    method: 'GET',
+    data: { current, size },
+  })

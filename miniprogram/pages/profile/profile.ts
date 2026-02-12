@@ -114,6 +114,12 @@ Page({
       })
       return
     }
+    if (key === 'my-collect') {
+      wx.navigateTo({
+        url: '/pages/my-collect/my-collect',
+      })
+      return
+    }
     wx.showToast({
       title: '该功能建设中',
       icon: 'none',

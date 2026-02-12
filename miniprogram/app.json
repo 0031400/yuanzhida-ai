@@ -5,6 +5,7 @@
     "pages/profile/profile",
     "pages/ask/ask",
     "pages/my-comment/my-comment",
+    "pages/my-collect/my-collect",
     "pages/question-detail/question-detail",
     "pages/login/login",
     "pages/register/register",
