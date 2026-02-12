@@ -1,9 +1,11 @@
-import { getQuestionCommentPage } from '../../api/comment'
+import { getQuestionCommentPage, publishComment } from '../../api/comment'
 import { envConfig } from '../../config/index'
 import { getQuestionDetail } from '../../api/question'
+import { authStore } from '../../store/auth.store'
 import type { CommentItem } from '../../types/comment'
 import type { QuestionDetail } from '../../types/question'
 import { formatDateTime } from '../../utils/day'
+import { pickErrorMessage } from '../../utils/error'
 
 interface CommentCard extends CommentItem {
   createTimeText: string
@@ -12,6 +14,8 @@ interface CommentCard extends CommentItem {
 interface QuestionDetailQuery {
   id?: string
 }
+
+type InputEvent = WechatMiniprogram.CustomEvent<{ value: string }>
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -57,6 +61,8 @@ Page({
     hasMoreComments: true,
     commentCurrent: 1,
     commentSize: DEFAULT_PAGE_SIZE,
+    commentDraft: '',
+    submittingComment: false,
   },
   onLoad(query: QuestionDetailQuery) {
     const questionId = Number(query.id)
@@ -148,6 +154,73 @@ Page({
       this.setData({
         commentLoadingMore: false,
       })
+    }
+  },
+  onCommentInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = typeof detail.value === 'string' ? detail.value : ''
+    this.setData({
+      commentDraft: value,
+    })
+  },
+  async onSubmitComment(): Promise<void> {
+    if (this.data.submittingComment) {
+      return
+    }
+
+    const auth = authStore.hydrate()
+    if (!auth.isLoggedIn) {
+      wx.showToast({
+        title: '请先登录后评论',
+        icon: 'none',
+      })
+      setTimeout(() => {
+        wx.navigateTo({
+          url: '/pages/login/login',
+        })
+      }, 200)
+      return
+    }
+
+    const content = this.data.commentDraft.trim()
+    if (content.length === 0) {
+      wx.showToast({
+        title: '请输入评论内容',
+        icon: 'none',
+      })
+      return
+    }
+
+    this.setData({ submittingComment: true })
+    try {
+      await publishComment({
+        questionId: this.data.questionId,
+        content,
+      })
+      const currentQuestion = this.data.question
+      if (currentQuestion) {
+        this.setData({
+          question: {
+            ...currentQuestion,
+            commentCount: currentQuestion.commentCount + 1,
+          },
+        })
+      }
+      this.setData({
+        commentDraft: '',
+      })
+      wx.showToast({
+        title: '评论成功',
+        icon: 'success',
+      })
+      await this.loadComments(true)
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '评论失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ submittingComment: false })
     }
   },
   onPreviewImage(event: WechatMiniprogram.TouchEvent) {

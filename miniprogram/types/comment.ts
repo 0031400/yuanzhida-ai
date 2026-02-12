@@ -16,4 +16,12 @@ export interface CommentPageQuery {
   id: number
 }
 
+export interface PublishCommentPayload {
+  questionId: number
+  content: string
+  parentCommentId?: number
+  topCommentId?: number
+  images?: string
+}
+
 export type CommentPage = PageResult<CommentItem>

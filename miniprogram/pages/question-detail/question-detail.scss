@@ -10,7 +10,7 @@ page {
 .scroll {
   height: 100%;
   box-sizing: border-box;
-  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
 }
 
 .question-card {
@@ -121,6 +121,34 @@ page {
 .footer-text {
   font-size: 24rpx;
   color: #9ca3af;
+}
+
+.comment-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1rpx solid #e5e7eb;
+  box-shadow: 0 -8rpx 24rpx rgba(15, 23, 42, 0.04);
+}
+
+.comment-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: #f3f4f6;
+  font-size: 26rpx;
+  color: #111827;
+}
+
+.comment-send-btn {
+  min-width: 116rpx !important;
 }
 
 .skeleton-card {

@@ -65,4 +65,26 @@
       </view>
     </block>
   </scroll-view>
+
+  <view class="comment-bar">
+    <input
+      class="comment-input"
+      type="text"
+      maxlength="300"
+      placeholder="写下你的评论..."
+      value="{{commentDraft}}"
+      bindinput="onCommentInput"
+      confirm-type="send"
+      bindconfirm="onSubmitComment"
+    />
+    <van-button
+      custom-class="comment-send-btn"
+      type="primary"
+      size="small"
+      loading="{{submittingComment}}"
+      bind:tap="onSubmitComment"
+    >
+      发送
+    </van-button>
+  </view>
 </view>
