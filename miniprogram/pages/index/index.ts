@@ -9,7 +9,6 @@ type SearchInputEvent = WechatMiniprogram.CustomEvent<string>
 type TapEvent = WechatMiniprogram.TouchEvent
 
 interface QuestionCard extends QuestionItem {
-  categoryName: string
   createTimeText: string
   solvedText: string
 }
@@ -17,12 +16,15 @@ interface QuestionCard extends QuestionItem {
 const ALL_CATEGORY_ID = 0
 const DEFAULT_PAGE_SIZE = 10
 
-const toCategoryId = (question: QuestionItem): number => {
-  if (typeof question.categoryId === 'number') {
-    return question.categoryId
+const toNumberId = (value: unknown): number => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value
   }
-  if (typeof question.category === 'number') {
-    return question.category
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const parsed = Number(value)
+    if (Number.isFinite(parsed)) {
+      return parsed
+    }
   }
   return 0
 }
@@ -60,7 +62,16 @@ Component({
     async loadCategories(): Promise<void> {
       try {
         const categories = await getCategoryList()
-        this.setData({ categories })
+        const normalized = categories
+          .map((item) => {
+            const id = toNumberId((item as unknown as { id?: unknown }).id)
+            return {
+              ...item,
+              id,
+            }
+          })
+          .filter((item) => item.id > 0)
+        this.setData({ categories: normalized })
       } catch (_error) {
         wx.showToast({
           title: '主题加载失败',
@@ -84,16 +95,8 @@ Component({
       return query
     },
     mapToCard(question: QuestionItem): QuestionCard {
-      const categoryId = toCategoryId(question)
-      const matchedCategory = this.data.categories.find((item) => item.id === categoryId)
-      const categoryName =
-        matchedCategory && matchedCategory.name !== undefined && matchedCategory.name !== null
-          ? matchedCategory.name
-          : '未分类'
       return {
         ...question,
-        categoryId,
-        categoryName,
         createTimeText: formatFromNow(question.createTime),
         solvedText: question.solvedFlag === 1 ? '已解决' : '待解决',
       }

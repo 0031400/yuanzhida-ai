@@ -64,7 +64,6 @@
           bindtap="onQuestionTap"
         >
           <view class="card-head">
-            <text class="category-tag">{{item.categoryName}}</text>
             <text class="status-tag {{item.solvedFlag === 1 ? 'resolved' : 'pending'}}">{{item.solvedText}}</text>
           </view>
           <text class="title">{{item.title}}</text>

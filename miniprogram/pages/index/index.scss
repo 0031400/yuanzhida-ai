@@ -61,16 +61,8 @@ page {
 
 .card-head {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-}
-
-.category-tag {
-  padding: 6rpx 14rpx;
-  border-radius: 999rpx;
-  background: #eef2ff;
-  color: #4338ca;
-  font-size: 22rpx;
 }
 
 .status-tag {
