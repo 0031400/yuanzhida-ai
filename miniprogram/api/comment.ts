@@ -37,3 +37,10 @@ export const deleteComment = (id: number) =>
     url: `/api/answerly/v1/comment?id=${id}`,
     method: 'DELETE',
   })
+
+export const toggleCommentUseful = (id: number) =>
+  request<null, { id: number }>({
+    url: '/api/answerly/v1/comment/useful',
+    method: 'POST',
+    data: { id },
+  })

@@ -1,4 +1,10 @@
-import { deleteComment, getQuestionCommentPage, likeComment, publishComment } from '../../api/comment'
+import {
+  deleteComment,
+  getQuestionCommentPage,
+  likeComment,
+  publishComment,
+  toggleCommentUseful,
+} from '../../api/comment'
 import { uploadImage } from '../../api/upload'
 import { envConfig } from '../../config/index'
 import { getQuestionDetail, resolveQuestion } from '../../api/question'
@@ -344,6 +350,38 @@ Page({
         }
       },
     })
+  },
+  async onToggleCommentUseful(event: WechatMiniprogram.TouchEvent): Promise<void> {
+    if (!this.ensureLoginForAction()) {
+      return
+    }
+    if (!this.data.canResolveQuestion) {
+      wx.showToast({
+        title: '仅题主可标记有用',
+        icon: 'none',
+      })
+      return
+    }
+    const rawId = event.currentTarget.dataset.id
+    const rawUseful = event.currentTarget.dataset.useful
+    const id = typeof rawId === 'number' ? rawId : Number(rawId)
+    if (!Number.isFinite(id) || id <= 0) {
+      return
+    }
+
+    try {
+      await toggleCommentUseful(id)
+      wx.showToast({
+        title: rawUseful === 1 || rawUseful === '1' ? '已取消有用' : '已标记有用',
+        icon: 'success',
+      })
+      await this.loadComments(true)
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '操作失败'),
+        icon: 'none',
+      })
+    }
   },
   onReplyTopComment(event: WechatMiniprogram.TouchEvent): void {
     const rawId = event.currentTarget.dataset.id

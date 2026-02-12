@@ -13,6 +13,7 @@ export interface CommentItem {
   avatar?: string
   likeCount: number
   likeStatus?: string
+  useful?: number
   createTime: string
   childComments?: CommentItem[]
 }

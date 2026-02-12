@@ -100,6 +100,15 @@
                 回复
               </text>
               <text
+                wx:if="{{canResolveQuestion}}"
+                class="comment-reply-btn {{comment.useful === 1 ? 'useful-active' : ''}}"
+                data-id="{{comment.id}}"
+                data-useful="{{comment.useful}}"
+                bindtap="onToggleCommentUseful"
+              >
+                {{comment.useful === 1 ? '取消有用' : '标记有用'}}
+              </text>
+              <text
                 wx:if="{{comment.isMine}}"
                 class="comment-reply-btn danger"
                 data-id="{{comment.id}}"
@@ -161,6 +170,15 @@
                     bindtap="onReplyChildComment"
                   >
                     回复
+                  </text>
+                  <text
+                    wx:if="{{canResolveQuestion}}"
+                    class="comment-reply-btn {{child.useful === 1 ? 'useful-active' : ''}}"
+                    data-id="{{child.id}}"
+                    data-useful="{{child.useful}}"
+                    bindtap="onToggleCommentUseful"
+                  >
+                    {{child.useful === 1 ? '取消有用' : '标记有用'}}
                   </text>
                   <text
                     wx:if="{{child.isMine}}"
