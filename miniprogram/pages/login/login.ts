@@ -1,5 +1,6 @@
 import { fetchLoginCaptcha } from '../../api/user'
 import { loginByPassword } from '../../services/auth.service'
+import { pickErrorMessage } from '../../utils/error'
 import { STORAGE_KEYS, storage } from '../../utils/storage'
 import { isNonEmpty } from '../../utils/validate'
 
@@ -28,7 +29,7 @@ Component({
         })
       } catch (error) {
         wx.showToast({
-          title: (error as Error).message || '验证码加载失败',
+          title: pickErrorMessage(error, '验证码加载失败'),
           icon: 'none',
         })
       }
@@ -65,7 +66,11 @@ Component({
             url: '/pages/index/index',
           })
         }, 300)
-      } catch (_error) {
+      } catch (error) {
+        wx.showToast({
+          title: pickErrorMessage(error, '登录失败'),
+          icon: 'none',
+        })
         await this.refreshCaptcha()
       } finally {
         this.setData({ submitting: false })

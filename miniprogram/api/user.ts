@@ -59,6 +59,20 @@ export const getUserProfile = (username: string) =>
     authRequired: true,
   })
 
+export const getActualUserProfile = (username: string) =>
+  request<UserProfile>({
+    url: `/api/answerly/v1/actual/user/${username}`,
+    method: 'GET',
+    authRequired: true,
+  })
+
+export const getMyActivityScore = () =>
+  request<number>({
+    url: '/api/answerly/v1/user/activity/score',
+    method: 'GET',
+    authRequired: true,
+  })
+
 export const sendRegisterCode = (mail: string) =>
   request<boolean>({
     url: '/api/answerly/v1/user/send-code',

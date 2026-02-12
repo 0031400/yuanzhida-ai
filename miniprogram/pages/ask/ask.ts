@@ -2,14 +2,12 @@ import { getCategoryList } from '../../api/category'
 import { authStore } from '../../store/auth.store'
 import type { CategoryItem } from '../../types/category'
 import { publishQuestionWithImages } from '../../services/question.service'
+import { pickErrorMessage } from '../../utils/error'
 import { isNonEmpty } from '../../utils/validate'
 
 type TapEvent = WechatMiniprogram.TouchEvent
 
 const MAX_IMAGE_COUNT = 3
-const pickErrorMessage = (error: unknown, fallback: string): string =>
-  typeof error === 'string' && error.trim().length > 0 ? error : fallback
-
 Page({
   data: {
     title: '',

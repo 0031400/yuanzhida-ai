@@ -1,8 +1,70 @@
-﻿<navigation-bar title="我的" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="我的" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="page">
-  <view class="card">
-    <text class="title">个人主页</text>
-    <text class="desc">后续接入我的信息、我的提问、收藏和最近浏览。</text>
+  <view wx:if="{{!isLoggedIn}}" class="card guest-card">
+    <text class="guest-title">登录后查看个人主页</text>
+    <text class="guest-desc">查看个人数据、收藏记录和消息通知</text>
+    <van-button type="primary" round bindtap="onLoginTap">去登录</van-button>
   </view>
+
+  <view wx:elif="{{loading}}" class="card">
+    <view class="skeleton-line title"></view>
+    <view class="skeleton-line"></view>
+    <view class="skeleton-line short"></view>
+  </view>
+
+  <block wx:else>
+    <view class="card profile-card">
+      <view class="profile-main">
+        <view class="avatar-wrap">
+          <image wx:if="{{profile && profile.avatar}}" class="avatar" src="{{profile.avatar}}" mode="aspectFill" />
+          <view wx:else class="avatar avatar-fallback">
+            <text class="avatar-text">{{(profile && profile.username) ? profile.username.slice(0, 1).toUpperCase() : '我'}}</text>
+          </view>
+        </view>
+        <view class="profile-meta">
+          <text class="username">{{profile.username}}</text>
+          <text class="introduction">{{profile.introduction || '这个同学很神秘，暂时没有简介。'}}</text>
+        </view>
+      </view>
+      <view class="stats-row">
+        <view class="stat-item" wx:for="{{stats}}" wx:key="label">
+          <text class="stat-value">{{item.value}}</text>
+          <text class="stat-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card menu-card">
+      <view class="menu-item" data-key="message" bindtap="onMenuTap">
+        <text class="menu-title">消息中心</text>
+        <view class="menu-right">
+          <view wx:if="{{unreadCount > 0}}" class="badge">{{unreadCount}}</view>
+          <text class="arrow">></text>
+        </view>
+      </view>
+      <view class="menu-item" data-key="my-question" bindtap="onMenuTap">
+        <text class="menu-title">我的提问</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="menu-item" data-key="my-comment" bindtap="onMenuTap">
+        <text class="menu-title">我的评论</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="menu-item" data-key="my-collect" bindtap="onMenuTap">
+        <text class="menu-title">我的收藏</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="menu-item" data-key="my-recent" bindtap="onMenuTap">
+        <text class="menu-title">最近浏览</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="menu-item danger" data-key="logout" bindtap="onMenuTap">
+        <text class="menu-title">退出登录</text>
+        <text class="arrow">></text>
+      </view>
+    </view>
+  </block>
+
+  <view class="safe-bottom"></view>
 </view>

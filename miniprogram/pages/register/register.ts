@@ -1,11 +1,9 @@
 import { register, sendRegisterCode } from '../../api/user'
+import { pickErrorMessage } from '../../utils/error'
 import { isNonEmpty } from '../../utils/validate'
 
 const CODE_SECONDS = 60
 let countdownTimer: number | null = null
-const pickErrorMessage = (error: unknown, fallback: string): string =>
-  typeof error === 'string' && error.trim().length > 0 ? error : fallback
-
 const isEmail = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
 Page({

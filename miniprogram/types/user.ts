@@ -11,8 +11,15 @@ export interface LoginResult {
 export interface UserProfile {
   id: number
   username: string
+  studentId?: string
+  userType?: string
   avatar?: string
   introduction?: string
+  likeCount?: number
+  collectCount?: number
+  usefulCount?: number
+  solvedCount?: number
+  phone?: string
 }
 
 export interface RegisterPayload {
