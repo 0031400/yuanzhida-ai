@@ -252,13 +252,22 @@ Page({
     }
     const rawId = event.currentTarget.dataset.id
     const username = String(event.currentTarget.dataset.username || '')
+    const rawHasChildren = event.currentTarget.dataset.hasChildren
     const id = typeof rawId === 'number' ? rawId : Number(rawId)
+    const hasChildren = rawHasChildren === true || rawHasChildren === 'true'
     if (!Number.isFinite(id) || id <= 0) {
       return
     }
     if (username !== this.data.currentUsername) {
       wx.showToast({
         title: '只能删除自己的评论',
+        icon: 'none',
+      })
+      return
+    }
+    if (hasChildren) {
+      wx.showToast({
+        title: '该评论有回复，暂不支持删除',
         icon: 'none',
       })
       return

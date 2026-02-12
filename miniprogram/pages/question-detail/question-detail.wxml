@@ -91,6 +91,7 @@
                 class="comment-reply-btn danger"
                 data-id="{{comment.id}}"
                 data-username="{{comment.username}}"
+                data-has-children="{{comment.childCards.length > 0}}"
                 bindtap="onDeleteComment"
               >
                 删除
@@ -153,6 +154,7 @@
                     class="comment-reply-btn danger"
                     data-id="{{child.id}}"
                     data-username="{{child.username}}"
+                    data-has-children="{{false}}"
                     bindtap="onDeleteComment"
                   >
                     删除
