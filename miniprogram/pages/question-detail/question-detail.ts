@@ -7,6 +7,7 @@ import {
   updateComment,
 } from '../../api/comment'
 import { uploadImage } from '../../api/upload'
+import { getUserProfile } from '../../api/user'
 import { envConfig } from '../../config/index'
 import {
   deleteQuestion,
@@ -18,6 +19,7 @@ import {
 import { authStore } from '../../store/auth.store'
 import type { CommentItem } from '../../types/comment'
 import type { QuestionDetail } from '../../types/question'
+import type { UserProfile } from '../../types/user'
 import { formatDateTime } from '../../utils/day'
 import { pickErrorMessage } from '../../utils/error'
 
@@ -95,6 +97,10 @@ Page({
     deletingQuestion: false,
     togglingCollect: false,
     togglingLike: false,
+    showUserPopup: false,
+    userPopupLoading: false,
+    userPopupError: '',
+    userPopupProfile: null as UserProfile | null,
   },
   onLoad(query: QuestionDetailQuery) {
     const auth = authStore.hydrate()
@@ -893,4 +899,42 @@ Page({
       urls: childComment.imageList,
     })
   },
+  onUserTap(event: WechatMiniprogram.TouchEvent): void {
+    const username = String(event.currentTarget.dataset.username || '').trim()
+    if (!username) {
+      return
+    }
+    void this.openUserPopup(username)
+  },
+  async openUserPopup(username: string): Promise<void> {
+    this.setData({
+      showUserPopup: true,
+      userPopupLoading: true,
+      userPopupError: '',
+      userPopupProfile: {
+        id: 0,
+        username,
+      },
+    })
+    try {
+      const profile = await getUserProfile(username)
+      this.setData({
+        userPopupProfile: profile,
+      })
+    } catch (error) {
+      this.setData({
+        userPopupError: pickErrorMessage(error, '用户信息加载失败'),
+      })
+    } finally {
+      this.setData({
+        userPopupLoading: false,
+      })
+    }
+  },
+  onCloseUserPopup(): void {
+    this.setData({
+      showUserPopup: false,
+    })
+  },
+  onUserPopupPanelTap(): void {},
 })

@@ -80,7 +80,7 @@
           <rich-text class="title rich-block" nodes="{{item.titleRich}}" />
           <rich-text class="question-content rich-block" nodes="{{item.contentRich}}" />
           <view class="meta-row">
-            <text class="meta">{{item.username}}</text>
+            <text class="meta user-link" data-username="{{item.username}}" catchtap="onUserTap">{{item.username}}</text>
             <text class="meta">{{item.createTimeText}}</text>
             <text class="meta">赞 {{item.likeCount}}</text>
             <text class="meta">评 {{item.commentCount}}</text>
@@ -98,5 +98,50 @@
   <view class="ask-fab" bindtap="onAskTap" hover-class="ask-fab-hover">
     <view class="ask-fab-icon">+</view>
     <text class="ask-fab-text">提问</text>
+  </view>
+
+  <view wx:if="{{showUserPopup}}" class="user-popup-mask" catchtap="onCloseUserPopup">
+    <view class="user-popup" catchtap="onUserPopupPanelTap">
+      <view class="user-popup-head">
+        <text class="user-popup-title">用户信息</text>
+        <text class="user-popup-close" bindtap="onCloseUserPopup">关闭</text>
+      </view>
+      <view wx:if="{{userPopupLoading}}" class="user-popup-loading">加载中...</view>
+      <view wx:elif="{{userPopupProfile}}" class="user-popup-body">
+        <view class="user-popup-avatar-wrap">
+          <image
+            wx:if="{{userPopupProfile.avatar}}"
+            class="user-popup-avatar"
+            src="{{userPopupProfile.avatar}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="user-popup-avatar user-popup-avatar-fallback">
+            <text>{{userPopupProfile.username.slice(0, 1).toUpperCase()}}</text>
+          </view>
+        </view>
+        <text class="user-popup-name">{{userPopupProfile.username}}</text>
+        <text wx:if="{{userPopupProfile.userType}}" class="user-popup-type">{{userPopupProfile.userType}}</text>
+        <text class="user-popup-intro">{{userPopupProfile.introduction || '这个用户暂未填写简介。'}}</text>
+        <view class="user-popup-stats">
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.likeCount || 0}}</text>
+            <text class="user-popup-stat-label">获赞</text>
+          </view>
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.collectCount || 0}}</text>
+            <text class="user-popup-stat-label">收藏</text>
+          </view>
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.usefulCount || 0}}</text>
+            <text class="user-popup-stat-label">有用</text>
+          </view>
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.solvedCount || 0}}</text>
+            <text class="user-popup-stat-label">解决</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{userPopupError}}" class="user-popup-error">{{userPopupError}}</view>
+    </view>
   </view>
 </view>

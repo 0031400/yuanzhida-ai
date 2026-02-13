@@ -1,9 +1,12 @@
 import { getCategoryList } from '../../api/category'
 import { getQuestionPage, getQuestionSuggest } from '../../api/question'
+import { getUserProfile } from '../../api/user'
 import { authStore } from '../../store/auth.store'
 import type { CategoryItem } from '../../types/category'
 import type { QuestionItem, QuestionPageQuery } from '../../types/question'
+import type { UserProfile } from '../../types/user'
 import { formatFromNow } from '../../utils/day'
+import { pickErrorMessage } from '../../utils/error'
 
 type SearchInputEvent = WechatMiniprogram.CustomEvent<string | { value?: string }>
 type TapEvent = WechatMiniprogram.TouchEvent
@@ -55,6 +58,10 @@ Component({
     hasMore: true,
     current: 1,
     size: DEFAULT_PAGE_SIZE,
+    showUserPopup: false,
+    userPopupLoading: false,
+    userPopupError: '',
+    userPopupProfile: null as UserProfile | null,
   },
   lifetimes: {
     attached() {
@@ -276,6 +283,44 @@ Component({
         url: `/pages/question-detail/question-detail?id=${id}`,
       })
     },
+    onUserTap(event: TapEvent): void {
+      const username = String(event.currentTarget.dataset.username || '').trim()
+      if (!username) {
+        return
+      }
+      void this.openUserPopup(username)
+    },
+    async openUserPopup(username: string): Promise<void> {
+      this.setData({
+        showUserPopup: true,
+        userPopupLoading: true,
+        userPopupError: '',
+        userPopupProfile: {
+          id: 0,
+          username,
+        },
+      })
+      try {
+        const profile = await getUserProfile(username)
+        this.setData({
+          userPopupProfile: profile,
+        })
+      } catch (error) {
+        this.setData({
+          userPopupError: pickErrorMessage(error, '用户信息加载失败'),
+        })
+      } finally {
+        this.setData({
+          userPopupLoading: false,
+        })
+      }
+    },
+    onCloseUserPopup(): void {
+      this.setData({
+        showUserPopup: false,
+      })
+    },
+    onUserPopupPanelTap(): void {},
     onAskTap(): void {
       const auth = authStore.hydrate()
       if (!auth.isLoggedIn) {

@@ -19,7 +19,10 @@
         <text class="title">{{question.title}}</text>
         <text class="content">{{question.content}}</text>
         <view class="meta-row">
-          <text class="meta">作者：{{question.username}}</text>
+          <text class="meta">
+            作者：
+            <text class="user-link" data-username="{{question.username}}" catchtap="onUserTap">{{question.username}}</text>
+          </text>
           <text class="meta">{{questionTimeText}}</text>
           <text class="meta">赞 {{question.likeCount}}</text>
           <text class="meta">评 {{question.commentCount}}</text>
@@ -91,7 +94,7 @@
       <block wx:else>
         <view class="comment-card" wx:for="{{comments}}" wx:key="id" wx:for-item="comment" wx:for-index="commentIndex">
           <view class="comment-head">
-            <text class="comment-user">{{comment.username}}</text>
+            <text class="comment-user user-link" data-username="{{comment.username}}" catchtap="onUserTap">{{comment.username}}</text>
             <text class="comment-time">{{comment.createTimeText}}</text>
           </view>
           <text class="comment-content">{{comment.content}}</text>
@@ -169,7 +172,7 @@
               wx:for-index="childIndex"
             >
               <view class="comment-head">
-                <text class="comment-user">{{child.username}}</text>
+                <text class="comment-user user-link" data-username="{{child.username}}" catchtap="onUserTap">{{child.username}}</text>
                 <text class="comment-time">{{child.createTimeText}}</text>
               </view>
               <text class="comment-content" wx:if="{{child.commentTo && child.commentTo.length > 0}}">
@@ -299,6 +302,51 @@
           {{editingCommentId > 0 ? '更新' : '发送'}}
         </van-button>
       </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showUserPopup}}" class="user-popup-mask" catchtap="onCloseUserPopup">
+    <view class="user-popup" catchtap="onUserPopupPanelTap">
+      <view class="user-popup-head">
+        <text class="user-popup-title">用户信息</text>
+        <text class="user-popup-close" bindtap="onCloseUserPopup">关闭</text>
+      </view>
+      <view wx:if="{{userPopupLoading}}" class="user-popup-loading">加载中...</view>
+      <view wx:elif="{{userPopupProfile}}" class="user-popup-body">
+        <view class="user-popup-avatar-wrap">
+          <image
+            wx:if="{{userPopupProfile.avatar}}"
+            class="user-popup-avatar"
+            src="{{userPopupProfile.avatar}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="user-popup-avatar user-popup-avatar-fallback">
+            <text>{{userPopupProfile.username.slice(0, 1).toUpperCase()}}</text>
+          </view>
+        </view>
+        <text class="user-popup-name">{{userPopupProfile.username}}</text>
+        <text wx:if="{{userPopupProfile.userType}}" class="user-popup-type">{{userPopupProfile.userType}}</text>
+        <text class="user-popup-intro">{{userPopupProfile.introduction || '这个用户暂未填写简介。'}}</text>
+        <view class="user-popup-stats">
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.likeCount || 0}}</text>
+            <text class="user-popup-stat-label">获赞</text>
+          </view>
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.collectCount || 0}}</text>
+            <text class="user-popup-stat-label">收藏</text>
+          </view>
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.usefulCount || 0}}</text>
+            <text class="user-popup-stat-label">有用</text>
+          </view>
+          <view class="user-popup-stat-item">
+            <text class="user-popup-stat-value">{{userPopupProfile.solvedCount || 0}}</text>
+            <text class="user-popup-stat-label">解决</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{userPopupError}}" class="user-popup-error">{{userPopupError}}</view>
     </view>
   </view>
 </view>
