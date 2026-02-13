@@ -1,4 +1,11 @@
-import type { LoginPayload, LoginResult, RegisterPayload, UpdateUserPayload, UserProfile } from '../types/user'
+import type {
+  LoginPayload,
+  LoginResult,
+  RegisterPayload,
+  ResetPasswordPayload,
+  UpdateUserPayload,
+  UserProfile,
+} from '../types/user'
 import { envConfig } from '../config/index'
 import { STORAGE_KEYS, storage } from '../utils/storage'
 import { request } from '../utils/request'
@@ -99,4 +106,20 @@ export const updateUserProfile = (payload: UpdateUserPayload) =>
     method: 'PUT',
     data: payload,
     authRequired: true,
+  })
+
+export const sendResetPasswordCode = (mail: string) =>
+  request<boolean>({
+    url: '/api/answerly/v1/user/send-reset-password-code',
+    method: 'GET',
+    data: { mail },
+    authRequired: false,
+  })
+
+export const resetPassword = (payload: ResetPasswordPayload) =>
+  request<boolean, ResetPasswordPayload>({
+    url: '/api/answerly/v1/user/reset-password',
+    method: 'POST',
+    data: payload,
+    authRequired: false,
   })

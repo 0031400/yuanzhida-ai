@@ -5,6 +5,7 @@
     <text class="guest-title">登录后查看个人主页</text>
     <text class="guest-desc">查看个人数据、收藏记录和消息通知</text>
     <van-button type="primary" round bindtap="onLoginTap">去登录</van-button>
+    <view class="guest-action-link" bindtap="onOpenResetPwdEditor">忘记密码？去重置</view>
   </view>
 
   <view wx:elif="{{loading}}" class="card">
@@ -62,6 +63,10 @@
         <text class="menu-title">最近浏览</text>
         <text class="arrow">></text>
       </view>
+      <view class="menu-item" data-key="reset-password" bindtap="onMenuTap">
+        <text class="menu-title">重置密码</text>
+        <text class="arrow">></text>
+      </view>
       <view class="menu-item danger" data-key="logout" bindtap="onMenuTap">
         <text class="menu-title">退出登录</text>
         <text class="arrow">></text>
@@ -91,6 +96,61 @@
         <view class="intro-btn cancel {{introSubmitting ? 'disabled' : ''}}" bindtap="onCloseIntroEditor">取消</view>
         <view class="intro-btn confirm {{introSubmitting ? 'disabled' : ''}}" bindtap="onSubmitIntroduction">
           {{introSubmitting ? '保存中...' : '保存'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showResetPwdEditor}}" class="intro-popup-mask" catchtap="onCloseResetPwdEditor">
+    <view class="intro-popup" catchtap="onResetPwdPanelTap">
+      <view class="intro-popup-head">
+        <text class="intro-popup-title">重置密码</text>
+        <text class="intro-popup-close" bindtap="onCloseResetPwdEditor">关闭</text>
+      </view>
+      <input
+        class="pwd-input"
+        type="text"
+        value="{{resetUsername}}"
+        placeholder="请输入用户名"
+        bindinput="onResetUsernameInput"
+      />
+      <input
+        class="pwd-input"
+        type="text"
+        value="{{resetMail}}"
+        placeholder="请输入注册邮箱"
+        bindinput="onResetMailInput"
+      />
+      <view class="code-row">
+        <input
+          class="pwd-input code-input"
+          type="text"
+          value="{{resetCode}}"
+          placeholder="请输入验证码"
+          bindinput="onResetCodeInput"
+        />
+        <view class="code-btn {{(resetSendingCode || resetCountdown > 0) ? 'disabled' : ''}}" bindtap="onSendResetCode">
+          {{resetCountdown > 0 ? (resetCountdown + 's') : (resetSendingCode ? '发送中...' : '发送验证码')}}
+        </view>
+      </view>
+      <input
+        class="pwd-input"
+        password="{{true}}"
+        value="{{resetPassword}}"
+        placeholder="请输入新密码（至少6位）"
+        bindinput="onResetPasswordInput"
+      />
+      <input
+        class="pwd-input"
+        password="{{true}}"
+        value="{{resetConfirmPassword}}"
+        placeholder="请再次输入新密码"
+        bindinput="onResetConfirmPasswordInput"
+      />
+      <view class="intro-popup-actions">
+        <view class="intro-btn cancel {{resetSubmitting ? 'disabled' : ''}}" bindtap="onCloseResetPwdEditor">取消</view>
+        <view class="intro-btn confirm {{resetSubmitting ? 'disabled' : ''}}" bindtap="onSubmitResetPassword">
+          {{resetSubmitting ? '提交中...' : '确认重置'}}
         </view>
       </view>
     </view>

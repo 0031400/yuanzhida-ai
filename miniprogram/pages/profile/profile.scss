@@ -38,6 +38,13 @@ page {
   color: #6b7280;
 }
 
+.guest-action-link {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #2563eb;
+}
+
 .profile-main {
   display: flex;
   align-items: center;
@@ -238,6 +245,48 @@ page {
   font-size: 26rpx;
   line-height: 1.6;
   color: #111827;
+}
+
+.pwd-input {
+  width: 100%;
+  height: 84rpx;
+  margin-top: 14rpx;
+  padding: 0 18rpx;
+  box-sizing: border-box;
+  border-radius: 14rpx;
+  background: #f8fafc;
+  font-size: 26rpx;
+  color: #111827;
+}
+
+.code-row {
+  margin-top: 14rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.code-input {
+  margin-top: 0;
+  flex: 1;
+}
+
+.code-btn {
+  flex-shrink: 0;
+  min-width: 180rpx;
+  height: 84rpx;
+  padding: 0 16rpx;
+  border-radius: 14rpx;
+  text-align: center;
+  line-height: 84rpx;
+  font-size: 24rpx;
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.code-btn.disabled {
+  color: #94a3b8;
+  background: #e2e8f0;
 }
 
 .intro-count {

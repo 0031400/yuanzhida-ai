@@ -1,9 +1,16 @@
-import { getActualUserProfile, getMyActivityScore, updateUserProfile } from '../../api/user'
+import {
+  getActualUserProfile,
+  getMyActivityScore,
+  resetPassword,
+  sendResetPasswordCode,
+  updateUserProfile,
+} from '../../api/user'
 import { syncUnreadCount } from '../../services/message.service'
 import { authStore } from '../../store/auth.store'
 import { appStore } from '../../store/app.store'
 import type { UserProfile } from '../../types/user'
 import { pickErrorMessage } from '../../utils/error'
+import { isNonEmpty, isValidBuaaRegisterMail } from '../../utils/validate'
 
 type TapEvent = WechatMiniprogram.TouchEvent
 type InputEvent = WechatMiniprogram.CustomEvent<{ value?: string }>
@@ -12,6 +19,9 @@ interface ProfileStat {
   label: string
   value: number
 }
+
+const CODE_SECONDS = 60
+let resetCountdownTimer: number | null = null
 
 Page({
   data: {
@@ -28,9 +38,40 @@ Page({
     showIntroEditor: false,
     introDraft: '',
     introSubmitting: false,
+    showResetPwdEditor: false,
+    resetUsername: '',
+    resetMail: '',
+    resetCode: '',
+    resetPassword: '',
+    resetConfirmPassword: '',
+    resetSendingCode: false,
+    resetCountdown: 0,
+    resetSubmitting: false,
+  },
+  onUnload() {
+    this.clearResetCountdown()
   },
   onShow() {
     void this.bootstrap()
+  },
+  clearResetCountdown(): void {
+    if (resetCountdownTimer !== null) {
+      clearInterval(resetCountdownTimer)
+      resetCountdownTimer = null
+    }
+  },
+  startResetCountdown(): void {
+    this.clearResetCountdown()
+    this.setData({ resetCountdown: CODE_SECONDS })
+    resetCountdownTimer = setInterval(() => {
+      const next = this.data.resetCountdown - 1
+      if (next <= 0) {
+        this.clearResetCountdown()
+        this.setData({ resetCountdown: 0 })
+        return
+      }
+      this.setData({ resetCountdown: next })
+    }, 1000)
   },
   async bootstrap(): Promise<void> {
     const auth = authStore.hydrate()
@@ -112,6 +153,154 @@ Page({
       showIntroEditor: true,
       introDraft: profile.introduction !== undefined && profile.introduction !== null ? profile.introduction : '',
     })
+  },
+  onOpenResetPwdEditor(): void {
+    const profile = this.data.profile
+    this.clearResetCountdown()
+    this.setData({
+      showResetPwdEditor: true,
+      resetUsername: profile && profile.username ? profile.username : '',
+      resetMail: '',
+      resetCode: '',
+      resetPassword: '',
+      resetConfirmPassword: '',
+      resetSendingCode: false,
+      resetCountdown: 0,
+      resetSubmitting: false,
+    })
+  },
+  onCloseResetPwdEditor(): void {
+    if (this.data.resetSubmitting) {
+      return
+    }
+    this.clearResetCountdown()
+    this.setData({
+      showResetPwdEditor: false,
+    })
+  },
+  onResetPwdPanelTap(): void {},
+  onResetMailInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = detail && typeof detail.value === 'string' ? detail.value : ''
+    this.setData({ resetMail: value })
+  },
+  onResetUsernameInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = detail && typeof detail.value === 'string' ? detail.value : ''
+    this.setData({ resetUsername: value })
+  },
+  onResetCodeInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = detail && typeof detail.value === 'string' ? detail.value : ''
+    this.setData({ resetCode: value })
+  },
+  onResetPasswordInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = detail && typeof detail.value === 'string' ? detail.value : ''
+    this.setData({ resetPassword: value })
+  },
+  onResetConfirmPasswordInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = detail && typeof detail.value === 'string' ? detail.value : ''
+    this.setData({ resetConfirmPassword: value })
+  },
+  async onSendResetCode(): Promise<void> {
+    if (this.data.resetSendingCode || this.data.resetCountdown > 0) {
+      return
+    }
+    const mail = this.data.resetMail.trim()
+    if (!isValidBuaaRegisterMail(mail)) {
+      wx.showToast({
+        title: '邮箱格式需为8位数字@buaa.edu.cn',
+        icon: 'none',
+      })
+      return
+    }
+
+    this.setData({ resetSendingCode: true })
+    try {
+      await sendResetPasswordCode(mail)
+      wx.showToast({
+        title: '验证码已发送',
+        icon: 'success',
+      })
+      this.startResetCountdown()
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '验证码发送失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ resetSendingCode: false })
+    }
+  },
+  async onSubmitResetPassword(): Promise<void> {
+    if (this.data.resetSubmitting) {
+      return
+    }
+    const username = this.data.resetUsername.trim()
+    if (!isNonEmpty(username)) {
+      wx.showToast({
+        title: '请输入用户名',
+        icon: 'none',
+      })
+      return
+    }
+
+    const code = this.data.resetCode.trim()
+    const newPassword = this.data.resetPassword
+    const confirmPassword = this.data.resetConfirmPassword
+    if (!isNonEmpty(code) || !isNonEmpty(newPassword)) {
+      wx.showToast({
+        title: '请填写验证码和新密码',
+        icon: 'none',
+      })
+      return
+    }
+    if (newPassword.length < 6) {
+      wx.showToast({
+        title: '密码至少 6 位',
+        icon: 'none',
+      })
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      wx.showToast({
+        title: '两次密码不一致',
+        icon: 'none',
+      })
+      return
+    }
+
+    this.setData({ resetSubmitting: true })
+    try {
+      await resetPassword({
+        username,
+        code,
+        newPassword,
+      })
+      this.clearResetCountdown()
+      this.setData({
+        showResetPwdEditor: false,
+        resetUsername: '',
+        resetMail: '',
+        resetCode: '',
+        resetPassword: '',
+        resetConfirmPassword: '',
+        resetCountdown: 0,
+      })
+      wx.showToast({
+        title: '密码重置成功',
+        icon: 'success',
+      })
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '密码重置失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ resetSubmitting: false })
+    }
   },
   onIntroductionInput(event: InputEvent): void {
     const detail = event.detail as { value?: string }
@@ -204,6 +393,10 @@ Page({
       wx.navigateTo({
         url: '/pages/my-recent/my-recent',
       })
+      return
+    }
+    if (key === 'reset-password') {
+      this.onOpenResetPwdEditor()
       return
     }
     wx.showToast({
