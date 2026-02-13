@@ -91,6 +91,25 @@ page {
   color: #6b7280;
 }
 
+.intro-row {
+  margin-top: 10rpx;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.intro-row .introduction {
+  margin-top: 0;
+  flex: 1;
+}
+
+.edit-intro-btn {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #2563eb;
+}
+
 .stats-row {
   margin-top: 28rpx;
   display: grid;
@@ -170,6 +189,93 @@ page {
 
 .safe-bottom {
   height: calc(env(safe-area-inset-bottom) + 20rpx);
+}
+
+.intro-popup-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.intro-popup {
+  width: 100%;
+  max-width: 650rpx;
+  border-radius: 20rpx;
+  background: #fff;
+  padding: 24rpx;
+}
+
+.intro-popup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.intro-popup-title {
+  font-size: 30rpx;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.intro-popup-close {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.intro-input {
+  width: 100%;
+  min-height: 180rpx;
+  margin-top: 16rpx;
+  padding: 18rpx;
+  box-sizing: border-box;
+  border-radius: 14rpx;
+  background: #f8fafc;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #111827;
+}
+
+.intro-count {
+  margin-top: 10rpx;
+  text-align: right;
+  font-size: 22rpx;
+  color: #64748b;
+}
+
+.intro-popup-actions {
+  margin-top: 18rpx;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12rpx;
+}
+
+.intro-btn {
+  height: 60rpx;
+  min-width: 132rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  line-height: 60rpx;
+  text-align: center;
+}
+
+.intro-btn.cancel {
+  color: #334155;
+  background: #e2e8f0;
+}
+
+.intro-btn.confirm {
+  color: #fff;
+  background: linear-gradient(135deg, #1677ff, #0f5fe0);
+}
+
+.intro-btn.disabled {
+  opacity: 0.65;
 }
 
 .skeleton-line {

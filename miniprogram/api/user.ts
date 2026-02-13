@@ -1,4 +1,4 @@
-import type { LoginPayload, LoginResult, RegisterPayload, UserProfile } from '../types/user'
+import type { LoginPayload, LoginResult, RegisterPayload, UpdateUserPayload, UserProfile } from '../types/user'
 import { envConfig } from '../config/index'
 import { STORAGE_KEYS, storage } from '../utils/storage'
 import { request } from '../utils/request'
@@ -91,4 +91,12 @@ export const register = (payload: RegisterPayload) =>
     method: 'POST',
     data: payload,
     authRequired: false,
+  })
+
+export const updateUserProfile = (payload: UpdateUserPayload) =>
+  request<null, UpdateUserPayload>({
+    url: '/api/answerly/v1/user',
+    method: 'PUT',
+    data: payload,
+    authRequired: true,
   })

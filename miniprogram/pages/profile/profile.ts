@@ -1,10 +1,12 @@
-import { getActualUserProfile, getMyActivityScore } from '../../api/user'
+import { getActualUserProfile, getMyActivityScore, updateUserProfile } from '../../api/user'
 import { syncUnreadCount } from '../../services/message.service'
 import { authStore } from '../../store/auth.store'
 import { appStore } from '../../store/app.store'
 import type { UserProfile } from '../../types/user'
+import { pickErrorMessage } from '../../utils/error'
 
 type TapEvent = WechatMiniprogram.TouchEvent
+type InputEvent = WechatMiniprogram.CustomEvent<{ value?: string }>
 
 interface ProfileStat {
   label: string
@@ -23,6 +25,9 @@ Page({
       { label: '收藏', value: 0 },
       { label: '有用', value: 0 },
     ] as ProfileStat[],
+    showIntroEditor: false,
+    introDraft: '',
+    introSubmitting: false,
   },
   onShow() {
     void this.bootstrap()
@@ -97,6 +102,75 @@ Page({
     wx.switchTab({
       url: '/pages/message-center/message-center',
     })
+  },
+  onEditIntroductionTap(): void {
+    const profile = this.data.profile
+    if (!profile) {
+      return
+    }
+    this.setData({
+      showIntroEditor: true,
+      introDraft: profile.introduction !== undefined && profile.introduction !== null ? profile.introduction : '',
+    })
+  },
+  onIntroductionInput(event: InputEvent): void {
+    const detail = event.detail as { value?: string }
+    const value = detail && typeof detail.value === 'string' ? detail.value : ''
+    this.setData({
+      introDraft: value,
+    })
+  },
+  onCloseIntroEditor(): void {
+    if (this.data.introSubmitting) {
+      return
+    }
+    this.setData({
+      showIntroEditor: false,
+    })
+  },
+  onIntroEditorPanelTap(): void {},
+  async onSubmitIntroduction(): Promise<void> {
+    if (this.data.introSubmitting) {
+      return
+    }
+    const profile = this.data.profile
+    if (!profile || !profile.username) {
+      return
+    }
+
+    const trimmed = this.data.introDraft.trim()
+    const currentIntro = profile.introduction !== undefined && profile.introduction !== null ? profile.introduction : ''
+    if (trimmed === currentIntro) {
+      this.setData({ showIntroEditor: false })
+      return
+    }
+
+    this.setData({ introSubmitting: true })
+    try {
+      await updateUserProfile({
+        oldUsername: profile.username,
+        newUsername: profile.username,
+        introduction: trimmed,
+      })
+      this.setData({
+        showIntroEditor: false,
+        profile: {
+          ...profile,
+          introduction: trimmed,
+        },
+      })
+      wx.showToast({
+        title: '简介已更新',
+        icon: 'success',
+      })
+    } catch (error) {
+      wx.showToast({
+        title: pickErrorMessage(error, '简介更新失败'),
+        icon: 'none',
+      })
+    } finally {
+      this.setData({ introSubmitting: false })
+    }
   },
   onMenuTap(event: TapEvent): void {
     const key = String(event.currentTarget.dataset.key || '')

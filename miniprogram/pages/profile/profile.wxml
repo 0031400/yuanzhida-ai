@@ -24,7 +24,10 @@
         </view>
         <view class="profile-meta">
           <text class="username">{{profile.username}}</text>
-          <text class="introduction">{{profile.introduction || '这个同学很神秘，暂时没有简介。'}}</text>
+          <view class="intro-row">
+            <text class="introduction">{{profile.introduction || '这个同学很神秘，暂时没有简介。'}}</text>
+            <text class="edit-intro-btn" bindtap="onEditIntroductionTap">编辑简介</text>
+          </view>
         </view>
       </view>
       <view class="stats-row">
@@ -67,4 +70,29 @@
   </block>
 
   <view class="safe-bottom"></view>
+
+  <view wx:if="{{showIntroEditor}}" class="intro-popup-mask" catchtap="onCloseIntroEditor">
+    <view class="intro-popup" catchtap="onIntroEditorPanelTap">
+      <view class="intro-popup-head">
+        <text class="intro-popup-title">编辑简介</text>
+        <text class="intro-popup-close" bindtap="onCloseIntroEditor">关闭</text>
+      </view>
+      <textarea
+        class="intro-input"
+        maxlength="80"
+        value="{{introDraft}}"
+        bindinput="onIntroductionInput"
+        placeholder="写点关于你自己的介绍..."
+        show-confirm-bar="{{false}}"
+        auto-height="{{true}}"
+      />
+      <view class="intro-count">{{introDraft.length}} / 80</view>
+      <view class="intro-popup-actions">
+        <view class="intro-btn cancel {{introSubmitting ? 'disabled' : ''}}" bindtap="onCloseIntroEditor">取消</view>
+        <view class="intro-btn confirm {{introSubmitting ? 'disabled' : ''}}" bindtap="onSubmitIntroduction">
+          {{introSubmitting ? '保存中...' : '保存'}}
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

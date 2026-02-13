@@ -28,3 +28,12 @@ export interface RegisterPayload {
   mail: string
   code: string
 }
+
+export interface UpdateUserPayload {
+  oldUsername: string
+  newUsername?: string
+  password?: string
+  avatar?: string
+  phone?: string
+  introduction?: string
+}
