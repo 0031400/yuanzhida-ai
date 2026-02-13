@@ -50,6 +50,7 @@ Page({
     pageTitle: '发布问题',
     isEditMode: false,
     editingQuestionId: 0,
+    isAdmin: false,
     title: '',
     content: '',
     categories: [] as CategoryItem[],
@@ -83,6 +84,9 @@ Page({
       }, 250)
       return
     }
+    this.setData({
+      isAdmin: authStore.isAdmin(),
+    })
 
     try {
       const categories = await getCategoryList()
@@ -106,13 +110,13 @@ Page({
     }
 
     if (this.data.isEditMode) {
-      await this.loadQuestionForEdit(auth.username)
+      await this.loadQuestionForEdit(auth.username, this.data.isAdmin)
     }
   },
-  async loadQuestionForEdit(currentUsername: string): Promise<void> {
+  async loadQuestionForEdit(currentUsername: string, isAdmin: boolean): Promise<void> {
     try {
       const detail = await getQuestionDetail(this.data.editingQuestionId)
-      if (!detail.username || detail.username !== currentUsername) {
+      if (!isAdmin && (!detail.username || detail.username !== currentUsername)) {
         wx.showToast({
           title: '仅题主可修改问题',
           icon: 'none',
@@ -122,7 +126,7 @@ Page({
         }, 250)
         return
       }
-      if (detail.commentCount > 0) {
+      if (!isAdmin && detail.commentCount > 0) {
         wx.showToast({
           title: '已有同学解答，不能修改',
           icon: 'none',
@@ -245,7 +249,7 @@ Page({
     try {
       if (this.data.isEditMode) {
         const latestDetail = await getQuestionDetail(this.data.editingQuestionId)
-        if (latestDetail.commentCount > 0) {
+        if (!this.data.isAdmin && latestDetail.commentCount > 0) {
           wx.showToast({
             title: '已有同学解答，不能修改',
             icon: 'none',

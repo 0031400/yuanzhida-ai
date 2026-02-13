@@ -87,6 +87,7 @@ Page({
     replyTopCommentId: 0,
     replyToUsername: '',
     currentUsername: '',
+    isAdmin: false,
     canResolveQuestion: false,
     canEditQuestion: false,
     canDeleteQuestion: false,
@@ -99,6 +100,7 @@ Page({
     const auth = authStore.hydrate()
     this.setData({
       currentUsername: auth.username,
+      isAdmin: authStore.isAdmin(),
     })
     const questionId = Number(query.id)
     if (!Number.isFinite(questionId) || questionId <= 0) {
@@ -115,6 +117,11 @@ Page({
   },
   onShow() {
     if (this.data.questionId > 0 && !this.data.loading) {
+      const auth = authStore.hydrate()
+      this.setData({
+        currentUsername: auth.username,
+        isAdmin: authStore.isAdmin(),
+      })
       void this.loadQuestionDetail()
     }
   },
@@ -128,6 +135,7 @@ Page({
     const auth = authStore.hydrate()
     this.setData({
       currentUsername: auth.username,
+      isAdmin: authStore.isAdmin(),
     })
     this.setData({
       loading: true,
@@ -150,19 +158,21 @@ Page({
   async loadQuestionDetail(): Promise<void> {
     try {
       const detail = await getQuestionDetail(this.data.questionId)
+      const isAdmin = this.data.isAdmin
       const canResolveQuestion =
-        this.data.currentUsername.length > 0 &&
-        detail.username !== undefined &&
-        detail.username !== null &&
-        detail.username === this.data.currentUsername
-      const canEditQuestion = canResolveQuestion && detail.commentCount === 0
+        isAdmin ||
+        (this.data.currentUsername.length > 0 &&
+          detail.username !== undefined &&
+          detail.username !== null &&
+          detail.username === this.data.currentUsername)
+      const canEditQuestion = isAdmin || (canResolveQuestion && detail.commentCount === 0)
       this.setData({
         question: detail,
         imageList: parseImageList(detail.images),
         questionTimeText: formatDateTime(detail.createTime),
         canResolveQuestion,
         canEditQuestion,
-        canDeleteQuestion: canEditQuestion,
+        canDeleteQuestion: isAdmin || canEditQuestion,
       })
     } catch (_error) {
       wx.showToast({
@@ -260,10 +270,11 @@ Page({
         try {
           const latest = await getQuestionDetail(question.id)
           const canDelete =
-            latest.username !== undefined &&
-            latest.username !== null &&
-            latest.username === this.data.currentUsername &&
-            latest.commentCount === 0
+            this.data.isAdmin ||
+            (latest.username !== undefined &&
+              latest.username !== null &&
+              latest.username === this.data.currentUsername &&
+              latest.commentCount === 0)
           if (!canDelete) {
             wx.showToast({
               title: '已有评论，不能删除问题',
@@ -452,16 +463,18 @@ Page({
       imageList: parseImageList(comment.images),
       childCards,
       isMine:
-        this.data.currentUsername.length > 0 &&
-        comment.username !== undefined &&
-        comment.username !== null &&
-        comment.username === this.data.currentUsername,
+        this.data.isAdmin ||
+        (this.data.currentUsername.length > 0 &&
+          comment.username !== undefined &&
+          comment.username !== null &&
+          comment.username === this.data.currentUsername),
     }
   },
   ensureLoginForAction(): boolean {
     const auth = authStore.hydrate()
     this.setData({
       currentUsername: auth.username,
+      isAdmin: authStore.isAdmin(),
     })
     if (auth.isLoggedIn) {
       return true
@@ -487,7 +500,7 @@ Page({
     if (!Number.isFinite(id) || id <= 0) {
       return
     }
-    if (username && username === this.data.currentUsername) {
+    if (!this.data.isAdmin && username && username === this.data.currentUsername) {
       wx.showToast({
         title: '不能点赞自己的评论',
         icon: 'none',
@@ -528,19 +541,21 @@ Page({
     if (!Number.isFinite(id) || id <= 0) {
       return
     }
-    if (username !== this.data.currentUsername) {
-      wx.showToast({
-        title: '只能删除自己的评论',
-        icon: 'none',
-      })
-      return
-    }
-    if (hasChildren) {
-      wx.showToast({
-        title: '该评论有回复，暂不支持删除',
-        icon: 'none',
-      })
-      return
+    if (!this.data.isAdmin) {
+      if (username !== this.data.currentUsername) {
+        wx.showToast({
+          title: '只能删除自己的评论',
+          icon: 'none',
+        })
+        return
+      }
+      if (hasChildren) {
+        wx.showToast({
+          title: '该评论有回复，暂不支持删除',
+          icon: 'none',
+        })
+        return
+      }
     }
 
     wx.showModal({
@@ -641,7 +656,7 @@ Page({
     if (!Number.isFinite(id) || id <= 0) {
       return
     }
-    if (username !== this.data.currentUsername) {
+    if (!this.data.isAdmin && username !== this.data.currentUsername) {
       wx.showToast({
         title: '只能编辑自己的评论',
         icon: 'none',
@@ -798,8 +813,8 @@ Page({
               ...currentQuestion,
               commentCount: currentQuestion.commentCount + 1,
             },
-            canEditQuestion: false,
-            canDeleteQuestion: false,
+            canEditQuestion: this.data.isAdmin,
+            canDeleteQuestion: this.data.isAdmin,
           })
         }
       this.setData({
