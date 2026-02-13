@@ -128,6 +128,21 @@ page {
   flex-shrink: 0;
 }
 
+.resolve-action-btn.share-question-btn {
+  background: #ecfdf3;
+  color: #166534;
+  border: 1rpx solid #bbf7d0;
+}
+
+button.resolve-action-btn.share-question-btn {
+  margin: 0;
+  padding: 0 22rpx;
+}
+
+button.resolve-action-btn.share-question-btn::after {
+  border: none;
+}
+
 .resolve-action-btn.confirm {
   background: linear-gradient(135deg, #16a34a, #15803d);
   color: #fff;

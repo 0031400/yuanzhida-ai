@@ -46,6 +46,7 @@
             >
               {{togglingCollect ? '处理中...' : (question.collectStatus === '已收藏' ? '取消收藏' : '收藏问题')}}
             </view>
+            <button class="resolve-action-btn share-question-btn" open-type="share">分享问题</button>
             <view
               wx:if="{{canEditQuestion}}"
               class="resolve-action-btn edit-question-btn"

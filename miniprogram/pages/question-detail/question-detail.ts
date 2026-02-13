@@ -111,6 +111,40 @@ Page({
     userPopupError: '',
     userPopupProfile: null as UserProfile | null,
   },
+  getSharePayload(): {
+    title: string
+    path: string
+    query: string
+    imageUrl?: string
+  } {
+    const question = this.data.question
+    const questionId = question && question.id > 0 ? question.id : this.data.questionId
+    const rawTitle = question && typeof question.title === 'string' ? question.title.trim() : ''
+    const title = rawTitle ? `问题求助：${rawTitle}` : '来看看这个问题'
+    const imageUrl = this.data.imageList.length > 0 ? this.data.imageList[0] : undefined
+    return {
+      title,
+      path: `/pages/question-detail/question-detail?id=${questionId}`,
+      query: `id=${questionId}`,
+      imageUrl,
+    }
+  },
+  onShareAppMessage(): WechatMiniprogram.Page.ICustomShareContent {
+    const payload = this.getSharePayload()
+    return {
+      title: payload.title,
+      path: payload.path,
+      imageUrl: payload.imageUrl,
+    }
+  },
+  onShareTimeline(): WechatMiniprogram.Page.ICustomTimelineContent {
+    const payload = this.getSharePayload()
+    return {
+      title: payload.title,
+      query: payload.query,
+      imageUrl: payload.imageUrl,
+    }
+  },
   onLoad(query: QuestionDetailQuery) {
     const auth = authStore.hydrate()
     this.setData({
@@ -127,6 +161,10 @@ Page({
     }
     this.setData({
       questionId,
+    })
+    wx.showShareMenu({
+      withShareTicket: false,
+      menus: ['shareAppMessage', 'shareTimeline'],
     })
     void this.bootstrap()
   },

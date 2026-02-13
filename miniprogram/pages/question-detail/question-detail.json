@@ -1,6 +1,8 @@
 {
   "navigationStyle": "custom",
   "enablePullDownRefresh": true,
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true,
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar",
     "van-empty": "@vant/weapp/empty/index",
