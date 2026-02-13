@@ -19,30 +19,108 @@ page {
 }
 
 .guest-card {
-  padding-top: 40rpx;
-  padding-bottom: 40rpx;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(59, 130, 246, 0.18), transparent 42%),
+    linear-gradient(155deg, #f8fbff, #eef4ff 60%, #f8fbff);
+  border: 1rpx solid #dbeafe;
+}
+
+.guest-hero {
+  padding: 34rpx 28rpx 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.guest-avatar {
+  width: 98rpx;
+  height: 98rpx;
+  border-radius: 28rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
+  box-shadow: 0 10rpx 26rpx rgba(37, 99, 235, 0.28);
+}
+
+.guest-avatar-text {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.guest-headline {
+  min-width: 0;
 }
 
 .guest-title {
   display: block;
-  font-size: 34rpx;
-  font-weight: 600;
-  color: #111827;
+  font-size: 33rpx;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .guest-desc {
-  margin-top: 14rpx;
-  margin-bottom: 28rpx;
+  margin-top: 10rpx;
   display: block;
-  font-size: 26rpx;
-  color: #6b7280;
+  font-size: 24rpx;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.guest-feature-row {
+  margin: 6rpx 28rpx 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10rpx;
+}
+
+.guest-feature {
+  padding: 16rpx 10rpx;
+  border-radius: 14rpx;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1rpx solid #dbeafe;
+  text-align: center;
+}
+
+.guest-feature-value {
+  display: block;
+  font-size: 27rpx;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.guest-feature-label {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 21rpx;
+  color: #64748b;
+}
+
+.guest-action-row {
+  padding: 24rpx 28rpx 30rpx;
+}
+
+.guest-login-btn {
+  width: 100% !important;
+  height: 76rpx !important;
+  font-size: 29rpx !important;
+  font-weight: 600 !important;
+  background: linear-gradient(135deg, #1677ff, #0f5fe0) !important;
+  border: none !important;
+  box-shadow: 0 10rpx 24rpx rgba(22, 119, 255, 0.25) !important;
 }
 
 .guest-action-link {
-  margin-top: 16rpx;
+  margin-top: 18rpx;
   text-align: center;
   font-size: 24rpx;
-  color: #2563eb;
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 .profile-main {

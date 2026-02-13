@@ -2,10 +2,35 @@
 
 <view class="page">
   <view wx:if="{{!isLoggedIn}}" class="card guest-card">
-    <text class="guest-title">登录后查看个人主页</text>
-    <text class="guest-desc">查看个人数据、收藏记录和消息通知</text>
-    <van-button type="primary" round bindtap="onLoginTap">去登录</van-button>
-    <view class="guest-action-link" bindtap="onOpenResetPwdEditor">忘记密码？去重置</view>
+    <view class="guest-hero">
+      <view class="guest-avatar">
+        <text class="guest-avatar-text">A</text>
+      </view>
+      <view class="guest-headline">
+        <text class="guest-title">登录后解锁完整个人主页</text>
+        <text class="guest-desc">管理提问、评论和收藏，及时查看互动消息</text>
+      </view>
+    </view>
+
+    <view class="guest-feature-row">
+      <view class="guest-feature">
+        <text class="guest-feature-value">提问</text>
+        <text class="guest-feature-label">沉淀学习记录</text>
+      </view>
+      <view class="guest-feature">
+        <text class="guest-feature-value">评论</text>
+        <text class="guest-feature-label">追踪回复动态</text>
+      </view>
+      <view class="guest-feature">
+        <text class="guest-feature-value">收藏</text>
+        <text class="guest-feature-label">整理重点内容</text>
+      </view>
+    </view>
+
+    <view class="guest-action-row">
+      <van-button type="primary" round custom-class="guest-login-btn" bindtap="onLoginTap">去登录</van-button>
+      <view class="guest-action-link" bindtap="onOpenResetPwdEditor">忘记密码？去重置</view>
+    </view>
   </view>
 
   <view wx:elif="{{loading}}" class="card">
