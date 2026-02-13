@@ -31,7 +31,7 @@ export const authStore = {
     updateState({
       username: payload.username,
       token: payload.token,
-      userType: payload.userType ?? state.userType,
+      userType: payload.userType !== undefined ? payload.userType : state.userType,
       isLoggedIn: true,
     })
   },
