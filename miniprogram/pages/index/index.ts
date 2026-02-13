@@ -8,7 +8,7 @@ import type { UserProfile } from '../../types/user'
 import { formatFromNow } from '../../utils/day'
 import { pickErrorMessage } from '../../utils/error'
 
-type SearchInputEvent = WechatMiniprogram.CustomEvent<string | { value?: string }>
+type SearchInputEvent = WechatMiniprogram.CustomEvent<{ value?: string }>
 type TapEvent = WechatMiniprogram.TouchEvent
 
 interface QuestionCard extends QuestionItem {
@@ -212,7 +212,7 @@ Component({
       }
     },
     onKeywordInput(event: SearchInputEvent): void {
-      const detail = event.detail
+      const detail = event.detail as unknown as string | { value?: string }
       const keyword =
         typeof detail === 'string'
           ? detail
