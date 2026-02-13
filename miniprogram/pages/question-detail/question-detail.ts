@@ -28,6 +28,7 @@ interface CommentCard extends CommentItem {
   imageList: string[]
   childCards: CommentCard[]
   isMine: boolean
+  isLiked: boolean
 }
 
 interface QuestionDetailQuery {
@@ -67,6 +68,14 @@ const parseImageList = (images?: string): string[] => {
     .split(',')
     .map((item) => normalizeImageUrl(item))
     .filter((item) => item.length > 0)
+}
+
+const isCommentLiked = (likeStatus: unknown): boolean => {
+  if (likeStatus === undefined || likeStatus === null) {
+    return false
+  }
+  const statusText = String(likeStatus)
+  return statusText.indexOf('已点赞') >= 0 || statusText === '1' || statusText.toLowerCase() === 'true'
 }
 
 Page({
@@ -468,6 +477,7 @@ Page({
       createTimeText: formatDateTime(comment.createTime),
       imageList: parseImageList(comment.images),
       childCards,
+      isLiked: isCommentLiked(comment.likeStatus),
       isMine:
         this.data.isAdmin ||
         (this.data.currentUsername.length > 0 &&
@@ -515,6 +525,11 @@ Page({
     }
 
     try {
+      const wasLiked = isCommentLiked(
+        event.currentTarget.dataset.likeStatus !== undefined
+          ? event.currentTarget.dataset.likeStatus
+          : event.currentTarget.dataset.liked,
+      )
       const likePayload: { id: number; entityUserId?: number } = { id }
       const question = this.data.question
       const entityUserId =
@@ -524,7 +539,7 @@ Page({
       }
       await likeComment(likePayload)
       wx.showToast({
-        title: '操作成功',
+        title: wasLiked ? '已取消点赞' : '已点赞',
         icon: 'success',
       })
       await this.loadComments(true)

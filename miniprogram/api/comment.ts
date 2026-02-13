@@ -6,7 +6,7 @@ export const getQuestionCommentPage = (query: CommentPageQuery) =>
     url: '/api/answerly/v1/comment/page',
     method: 'GET',
     data: query,
-    authRequired: false,
+    authRequired: true,
   })
 
 export const publishComment = (payload: PublishCommentPayload) =>

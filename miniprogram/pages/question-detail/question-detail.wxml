@@ -116,12 +116,14 @@
             <text class="comment-like">点赞 {{comment.likeCount}}</text>
             <view class="comment-action-group">
               <text
-                class="comment-reply-btn"
+                class="comment-reply-btn {{comment.isLiked ? 'liked-active' : ''}}"
                 data-id="{{comment.id}}"
                 data-username="{{comment.username}}"
+                data-like-status="{{comment.likeStatus}}"
+                data-liked="{{comment.isLiked}}"
                 bindtap="onLikeComment"
               >
-                点赞
+                {{comment.isLiked ? '取消点赞' : '点赞'}}
               </text>
               <text
                 class="comment-reply-btn"
@@ -198,12 +200,14 @@
                 <text class="comment-like">点赞 {{child.likeCount}}</text>
                 <view class="comment-action-group">
                   <text
-                    class="comment-reply-btn"
+                    class="comment-reply-btn {{child.isLiked ? 'liked-active' : ''}}"
                     data-id="{{child.id}}"
                     data-username="{{child.username}}"
+                    data-like-status="{{child.likeStatus}}"
+                    data-liked="{{child.isLiked}}"
                     bindtap="onLikeComment"
                   >
-                    点赞
+                    {{child.isLiked ? '取消点赞' : '点赞'}}
                   </text>
                   <text
                     class="comment-reply-btn"
