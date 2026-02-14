@@ -10,8 +10,7 @@
     "pages/my-recent/my-recent",
     "pages/question-detail/question-detail",
     "pages/login/login",
-    "pages/register/register",
-    "pages/logs/logs"
+    "pages/register/register"
   ],
   "tabBar": {
     "color": "#8c8c8c",
@@ -45,18 +44,11 @@
   },
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
-    "van-cell": "@vant/weapp/cell/index",
-    "van-cell-group": "@vant/weapp/cell-group/index",
     "van-empty": "@vant/weapp/empty/index",
     "van-field": "@vant/weapp/field/index",
-    "van-popup": "@vant/weapp/popup/index",
-    "van-dialog": "@vant/weapp/dialog/index",
-    "van-notify": "@vant/weapp/notify/index",
-    "van-uploader": "@vant/weapp/uploader/index",
     "van-search": "@vant/weapp/search/index",
     "van-tabs": "@vant/weapp/tabs/index",
-    "van-tab": "@vant/weapp/tab/index",
-    "van-toast": "@vant/weapp/toast/index"
+    "van-tab": "@vant/weapp/tab/index"
   },
   "style": "v2",
   "rendererOptions": {
